@@ -13,16 +13,16 @@ type Domain struct {
 
 // inteface of bussiness layer -> fungsi fungsi yang di butuhkan oleh domain (bussiness logic)
 type Service interface {
-	Append(book *Domain) (*Domain, error)
-	Update(book *Domain, id int) (*Domain, error)
+	Append(game *Domain) (*Domain, error)
+	Update(game *Domain, id int) (*Domain, error)
 	FindByID(id int) (*Domain, error)
 	Available(generalSearch string) []Domain
 }
 
 // interface of data layer -> fungsi fungsi untuk membaca / memerintah database, 3rd Party, ataupun package lain.
 type Repository interface {
-	Insert(book *Domain) (*Domain, error)
-	Update(book *Domain, id int) (*Domain, error)
+	Insert(game *Domain) (*Domain, error)
+	Update(game *Domain, id int) (*Domain, error)
 	FindByID(id int) (*Domain, error)
 	FindAll(generalSearch string, availability bool) []Domain
 }
