@@ -35,7 +35,7 @@ func (repo *repoGames) Update(game *games.Domain, id int) (*games.Domain, error)
 func (repo *repoGames) FindByID(id int) (*games.Domain, error) {
 	var recordGame Games
 
-	if err := repo.DBConn.Where("games.id = ?", id).Joins("Author").Find(&recordGame).Error; err != nil {
+	if err := repo.DBConn.Where("games.id = ?", id).Error; err != nil {
 		return &games.Domain{}, err
 	}
 	result := toDomain(recordGame)
