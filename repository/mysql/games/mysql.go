@@ -17,7 +17,7 @@ func NewRepoMySQL(db *gorm.DB) games.Repository {
 }
 
 func (repo *repoGames) Insert(game *games.Domain) (*games.Domain, error) {
-	recordGame := fromDomain(*game)
+	recordGame := FromDomain(*game)
 	if err := repo.DBConn.Create(&recordGame).Error; err != nil {
 		return &games.Domain{}, err
 	}
@@ -29,18 +29,41 @@ func (repo *repoGames) Insert(game *games.Domain) (*games.Domain, error) {
 	return record, nil
 }
 
-func (repo *repoGames) Update(game *games.Domain, id int) (*games.Domain, error) {
-	return &games.Domain{}, nil
+func (repo *repoGames) Update(game *games.Domain) (*games.Domain, error) {
+	recordGame := FromDomainUpdate(*game)
+	if err := repo.DBConn.Where("id=?", recordGame.ID).Updates(&recordGame).Error; err != nil {
+		return &games.Domain{}, err
+	}
+
+	record, err := repo.FindByID(int(recordGame.ID))
+	if err != nil {
+		return &games.Domain{}, err
+	}
+	return record, nil
 }
+
 func (repo *repoGames) FindByID(id int) (*games.Domain, error) {
 	var recordGame Games
 
 	if err := repo.DBConn.Where("games.id = ?", id).Find(&recordGame).Error; err != nil {
 		return &games.Domain{}, err
 	}
-	result := toDomain(recordGame)
+	result := ToDomain(recordGame)
 	return &result, nil
 }
-func (repo *repoGames) FindAll(generalSearch string, availability bool) []games.Domain {
-	return []games.Domain{}
+
+func (repo *repoGames) FindAll() ([]games.Domain, error) {
+	var recordGame []Games
+	if err := repo.DBConn.Find(&recordGame).Error; err != nil{
+		return []games.Domain{}, err
+	}
+	return ToDomainArray(recordGame), nil
+}
+
+func (repo *repoGames) Delete(game *games.Domain, id int) (string, error) {
+	recordGame := FromDomainUpdate(*game)
+	if err := repo.DBConn.Delete(&recordGame).Error; err != nil{
+		return "", err
+	}
+	return "Deleted.", nil
 }

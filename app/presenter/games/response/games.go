@@ -22,3 +22,12 @@ func FromDomain(domain games.Domain) Games {
 		UpdatedAt: domain.UpdatedAt,
 	}
 }
+
+func NewResponseArray(modelGames []games.Domain) []Games{
+	var response []Games
+
+	for _, val := range modelGames{
+		response = append(response, FromDomain(val))
+	}
+	return response
+}

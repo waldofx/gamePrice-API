@@ -9,11 +9,12 @@ import (
 
 type Games struct {
 	gorm.Model
+	ID        uint `gorm:"primaryKey"`
 	Name      string
 	Category  string
 }
 
-func toDomain(rec Games) games.Domain {
+func ToDomain(rec Games) games.Domain {
 	fmt.Printf("%+v", rec)
 	return games.Domain{
 		ID:        int(rec.ID),
@@ -24,9 +25,27 @@ func toDomain(rec Games) games.Domain {
 	}
 }
 
-func fromDomain(domain games.Domain) Games {
+func FromDomain(domain games.Domain) Games {
 	return Games{
 		Name:    domain.Name,
 		Category:     domain.Category,
 	}
+}
+
+
+func FromDomainUpdate(domain games.Domain) Games {
+	return Games{
+		ID: uint(domain.ID),
+		Name:    domain.Name,
+		Category:     domain.Category,
+	}
+}
+
+func ToDomainArray(modelGames []Games) []games.Domain{
+	var response []games.Domain
+
+	for _, val := range modelGames{
+		response = append(response, ToDomain(val))
+	}
+	return response
 }
