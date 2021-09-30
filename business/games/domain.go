@@ -16,7 +16,7 @@ type Service interface {
 	Append(game *Domain) (*Domain, error)
 	FindAll() ([]Domain, error)
 	FindByID(id int) (*Domain, error)
-	Update(game *Domain) (*Domain, error)
+	Update(game *Domain, id int) (*Domain, error)
 	Delete(game *Domain, id int) (string, error)
 }
 
@@ -25,6 +25,6 @@ type Repository interface {
 	Insert(game *Domain) (*Domain, error)
 	FindAll() ([]Domain, error)
 	FindByID(id int) (*Domain, error)
-	Update(game *Domain) (*Domain, error)
+	Update(game *Domain, id int) (*Domain, error)
 	Delete(game *Domain, id int) (string, error)
 }
