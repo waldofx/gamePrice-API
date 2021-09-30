@@ -12,6 +12,10 @@ import (
 	_servGames "gameprice-api/business/games"
 	_repoGames "gameprice-api/repository/mysql/games"
 
+	_handlerSellers "gameprice-api/app/presenter/sellers"
+	_servSellers "gameprice-api/business/sellers"
+	_repoSellers "gameprice-api/repository/mysql/sellers"
+
 	_middlewares "gameprice-api/app/middlewares"
 	_routes "gameprice-api/app/routes"
 )
@@ -35,6 +39,7 @@ func InitDB(status string) *gorm.DB {
 
 	DB.AutoMigrate(
 		&_repoGames.Games{},
+		&_repoSellers.Sellers{},
 	)
 
 	return DB
@@ -48,10 +53,14 @@ func main() {
 	gamesRepo := _repoGames.NewRepoMySQL(db)
 	gamesService := _servGames.NewService(gamesRepo)
 	gamesHandler := _handlerGames.NewHandler(gamesService)
+	sellersRepo := _repoSellers.NewRepoMySQL(db)
+	sellersService := _servSellers.NewService(sellersRepo)
+	sellersHandler := _handlerSellers.NewHandler(sellersService)
 
 	// initial of routes
 	routesInit := _routes.HandlerList{
 		GameHandler: *gamesHandler,
+		SellerHandler: *sellersHandler,
 	}
 	routesInit.RouteRegister(e)
 
