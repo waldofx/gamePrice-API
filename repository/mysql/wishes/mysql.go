@@ -45,7 +45,7 @@ func (repo *repoWishes) Update(wish *wishes.Domain, id int) (*wishes.Domain, err
 func (repo *repoWishes) FindByID(id int) (*wishes.Domain, error) {
 	var recordWish Wishes
 
-	if err := repo.DBConn.Where("wishes.id = ?", id).Find(&recordWish).Error; err != nil {
+	if err := repo.DBConn.Where("wishes.id = ?", id).Joins("User").Joins("Product").Find(&recordWish).Error; err != nil {
 		return &wishes.Domain{}, err
 	}
 	result := ToDomain(recordWish)
@@ -54,7 +54,7 @@ func (repo *repoWishes) FindByID(id int) (*wishes.Domain, error) {
 
 func (repo *repoWishes) FindAll() ([]wishes.Domain, error) {
 	var recordWish []Wishes
-	if err := repo.DBConn.Find(&recordWish).Error; err != nil{
+	if err := repo.DBConn.Joins("User").Joins("Product").Find(&recordWish).Error; err != nil{
 		return []wishes.Domain{}, err
 	}
 	return ToDomainArray(recordWish), nil

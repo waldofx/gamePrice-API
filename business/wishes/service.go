@@ -36,7 +36,6 @@ func (servProduct *serviceWishes) FindByID(id int) (*Domain, error) {
 }
 
 func (servProduct *serviceWishes) Update(wish *Domain, id int) (*Domain, error) {
-	//return &Domain{}, nil
 	result, err := servProduct.repository.Update(wish, id)
 	if err != nil {
 		return &Domain{}, err

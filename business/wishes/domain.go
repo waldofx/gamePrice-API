@@ -1,6 +1,8 @@
 package wishes
 
-import "time"
+import (
+	"time"
+)
 
 // domain layer / entity layer -> acuan utama dalam domain.
 type Domain struct {
@@ -8,7 +10,7 @@ type Domain struct {
 	UserID	  		int
 	User      		string
 	ProductID	  	int
-	Product      	string
+	Product      	string //products.Domain
 	CreatedAt 		time.Time
 	UpdatedAt 		time.Time
 }

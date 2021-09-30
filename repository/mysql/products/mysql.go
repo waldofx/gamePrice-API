@@ -45,7 +45,7 @@ func (repo *repoProducts) Update(product *products.Domain, id int) (*products.Do
 func (repo *repoProducts) FindByID(id int) (*products.Domain, error) {
 	var recordProduct Products
 
-	if err := repo.DBConn.Where("products.id = ?", id).Find(&recordProduct).Error; err != nil {
+	if err := repo.DBConn.Where("products.id = ?", id).Joins("Game").Joins("Seller").Find(&recordProduct).Error; err != nil {
 		return &products.Domain{}, err
 	}
 	result := ToDomain(recordProduct)
@@ -54,7 +54,7 @@ func (repo *repoProducts) FindByID(id int) (*products.Domain, error) {
 
 func (repo *repoProducts) FindAll() ([]products.Domain, error) {
 	var recordProduct []Products
-	if err := repo.DBConn.Find(&recordProduct).Error; err != nil{
+	if err := repo.DBConn.Joins("Game").Joins("Seller").Find(&recordProduct).Error; err != nil{
 		return []products.Domain{}, err
 	}
 	return ToDomainArray(recordProduct), nil

@@ -48,9 +48,9 @@ func (handler *HandlerList) RouteRegister(e *echo.Echo) {
 	products.DELETE("/:id", handler.ProductHandler.Delete)
 
 	wishes := e.Group("wishes")
-	wishes.POST("/insert", handler.ProductHandler.Create)
-	wishes.GET("/all", handler.ProductHandler.ReadAll)
-	wishes.GET("/:id", handler.ProductHandler.ReadID)
-	wishes.PUT("/:id", handler.ProductHandler.Update)
-	wishes.DELETE("/:id", handler.ProductHandler.Delete)
+	wishes.POST("/insert", handler.WishHandler.Create)
+	wishes.GET("/all", handler.WishHandler.ReadAll)
+	wishes.GET("/:id", handler.WishHandler.ReadID)
+	wishes.PUT("/:id", handler.WishHandler.Update)
+	wishes.DELETE("/:id", handler.WishHandler.Delete)
 }

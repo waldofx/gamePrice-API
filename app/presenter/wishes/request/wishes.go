@@ -12,7 +12,8 @@ type Wishes struct {
 
 func ToDomain(request Wishes) *wishes.Domain {
 	return &wishes.Domain{
-		ID: request.ID,
+		ID:		 	request.ID,
 		UserID:     request.UserID,
+		ProductID:  request.ProductID,
 	}
 }

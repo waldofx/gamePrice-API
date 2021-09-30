@@ -10,7 +10,7 @@ type Wishes struct {
 	UserID		int			`json:"user_id"`
 	User		string		`json:"user"`
 	ProductID	int			`json:"product_id"`
-	Product		string		`json:"product"`
+	Product		string		`json:"product"` //products.Domain
 	CreatedAt 	time.Time 	`json:"created_at"`
 	UpdatedAt 	time.Time 	`json:"updated_at"`
 }
