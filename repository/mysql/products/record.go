@@ -38,6 +38,7 @@ func FromDomain(domain products.Domain) Products {
 		ID: 		uint(domain.ID),
 		GameID: 	domain.GameID,
 		SellerID: 	domain.SellerID,
+		Price: domain.Price,
 	}
 }
 

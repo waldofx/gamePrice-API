@@ -35,7 +35,7 @@ func (repo *repoProducts) Update(product *products.Domain, id int) (*products.Do
 		return &products.Domain{}, err
 	}
 
-	record, err := repo.FindByID(int(recordProduct.ID))
+	record, err := repo.FindByID(int(id))
 	if err != nil {
 		return &products.Domain{}, err
 	}

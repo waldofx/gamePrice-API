@@ -35,7 +35,7 @@ func (repo *repoWishes) Update(wish *wishes.Domain, id int) (*wishes.Domain, err
 		return &wishes.Domain{}, err
 	}
 
-	record, err := repo.FindByID(int(recordWish.ID))
+	record, err := repo.FindByID(int(id))
 	if err != nil {
 		return &wishes.Domain{}, err
 	}
