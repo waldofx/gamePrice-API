@@ -13,9 +13,9 @@ type Products struct {
 	gorm.Model
 	ID       		uint 			`gorm:"primaryKey"`
 	GameID	 		int				//`gorm:"foreignKey:games_id"`
-	Game      		games.Games 	`gorm:"foreignKey:games_id"`
+	Game      		games.Games 	//`gorm:"foreignKey:games_id"`
 	SellerID  		int				//`gorm:"foreignKey:sellers_id"`
-	Seller    		sellers.Sellers `gorm:"foreignKey:sellers_id"`
+	Seller    		sellers.Sellers //`gorm:"foreignKey:sellers_id"`
 	Price	  		int
 }
 
@@ -23,7 +23,9 @@ func ToDomain(rec Products) products.Domain {
 	fmt.Printf("%+v", rec)
 	return products.Domain{
 		ID:        	int(rec.ID),
+		GameID: 	rec.GameID,
 		Game: 		rec.Game.Name,
+		SellerID: 	rec.SellerID,
 		Seller: 	rec.Seller.Name,
 		Price: 		rec.Price,
 		CreatedAt: 	rec.CreatedAt,
