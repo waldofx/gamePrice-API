@@ -1,9 +1,9 @@
-package games
+package users
 
 import (
-	"gameprice-api/app/presenter/games/request"
-	"gameprice-api/app/presenter/games/response"
-	"gameprice-api/business/games"
+	"gameprice-api/app/presenter/users/request"
+	"gameprice-api/app/presenter/users/response"
+	"gameprice-api/business/users"
 	"net/http"
 	"strconv"
 
@@ -11,24 +11,24 @@ import (
 )
 
 type Presenter struct {
-	serviceGame games.Service
+	serviceUser users.Service
 }
 
-func NewHandler(gameServ games.Service) *Presenter {
+func NewHandler(userServ users.Service) *Presenter {
 	return &Presenter{
-		serviceGame: gameServ,
+		serviceUser: userServ,
 	}
 }
 
 func (handler *Presenter) Create(echoContext echo.Context) error {
-	var req request.GameInsert
+	var req request.UserInsert
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
 	domain := request.ToDomain(req)
-	resp, err := handler.serviceGame.Append(domain)
+	resp, err := handler.serviceUser.Append(domain)
 	if err != nil {
 		return echoContext.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Internal Server Error",
@@ -42,14 +42,14 @@ func (handler *Presenter) Create(echoContext echo.Context) error {
 }
 
 func (handler *Presenter) Update(echoContext echo.Context) error{
-	var req request.GameUpdate
+	var req request.UserUpdate
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
 	domain := request.ToDomainUpdate(req)
-	resp, err := handler.serviceGame.Update(domain)
+	resp, err := handler.serviceUser.Update(domain)
 	if err != nil {
 		return echoContext.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Internal Server Error",
@@ -59,14 +59,14 @@ func (handler *Presenter) Update(echoContext echo.Context) error{
 }
 
 func (handler *Presenter) ReadAll(echoContext echo.Context) error{
-	games, err := handler.serviceGame.FindAll()
+	users, err := handler.serviceUser.FindAll()
 	if err != nil {
 		return echoContext.JSON(http.StatusBadRequest,  map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
 	return echoContext.JSON(http.StatusOK, map[string]interface{}{
-		"games": response.NewResponseArray(games),
+		"users": response.NewResponseArray(users),
 	})
 }
 
@@ -78,7 +78,7 @@ func (handler *Presenter) ReadID(echoContext echo.Context) error {
 			"message": "Bad Request",
 		})
 	}
-	resp, err :=  handler.serviceGame.FindByID(id)
+	resp, err :=  handler.serviceUser.FindByID(id)
 	if err != nil{
 		return echoContext.JSON(http.StatusNotFound, map[string]interface{}{
 			"message": "Not Found",
@@ -95,8 +95,8 @@ func(handler *Presenter) Delete(echoContext echo.Context) error{
 			"message": "Bad Request",
 		})
 	}
-	game, err1 := handler.serviceGame.FindByID(id)
-	result, err2 :=  handler.serviceGame.Delete(game, id)
+	user, err1 := handler.serviceUser.FindByID(id)
+	result, err2 :=  handler.serviceUser.Delete(user, id)
 
 	if err1 != nil{
 		return echoContext.JSON(http.StatusNotFound, map[string]interface{}{

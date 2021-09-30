@@ -65,5 +65,5 @@ func (repo *repoGames) Delete(game *games.Domain, id int) (string, error) {
 	if err := repo.DBConn.Delete(&recordGame).Error; err != nil{
 		return "", err
 	}
-	return "Deleted.", nil
+	return "Data Deleted.", nil
 }
