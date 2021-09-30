@@ -35,8 +35,8 @@ func (servSeller *serviceSellers) FindByID(id int) (*Domain, error) {
 	return result, nil
 }
 
-func (servSeller *serviceSellers) Update(seller *Domain) (*Domain, error) {
-	result, err := servSeller.repository.Update(seller)
+func (servSeller *serviceSellers) Update(seller *Domain, id int) (*Domain, error) {
+	result, err := servSeller.repository.Update(seller, id)
 	if err != nil {
 		return &Domain{}, err
 	}

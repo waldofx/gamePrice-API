@@ -21,7 +21,7 @@ func NewHandler(sellerServ sellers.Service) *Presenter {
 }
 
 func (handler *Presenter) Create(echoContext echo.Context) error {
-	var req request.SellerInsert
+	var req request.Sellers
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
@@ -42,14 +42,21 @@ func (handler *Presenter) Create(echoContext echo.Context) error {
 }
 
 func (handler *Presenter) Update(echoContext echo.Context) error{
-	var req request.SellerUpdate
+	idstr := echoContext.Param("id")
+	id, err := strconv.Atoi(idstr)
+	if err != nil{
+		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Bad Request",
+		})
+	}
+	var req request.Sellers
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
-	domain := request.ToDomainUpdate(req)
-	resp, err := handler.serviceSeller.Update(domain)
+	domain := request.ToDomain(req)
+	resp, err := handler.serviceSeller.Update(domain, id)
 	if err != nil {
 		return echoContext.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Internal Server Error",

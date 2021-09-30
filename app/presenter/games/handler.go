@@ -21,7 +21,7 @@ func NewHandler(gameServ games.Service) *Presenter {
 }
 
 func (handler *Presenter) Create(echoContext echo.Context) error {
-	var req request.GameInsert
+	var req request.Games
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
@@ -42,14 +42,21 @@ func (handler *Presenter) Create(echoContext echo.Context) error {
 }
 
 func (handler *Presenter) Update(echoContext echo.Context) error{
-	var req request.GameUpdate
+	idstr := echoContext.Param("id")
+	id, err := strconv.Atoi(idstr)
+	if err != nil{
+		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Bad Request",
+		})
+	}
+	var req request.Games
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
-	domain := request.ToDomainUpdate(req)
-	resp, err := handler.serviceGame.Update(domain)
+	domain := request.ToDomain(req)
+	resp, err := handler.serviceGame.Update(domain, id)
 	if err != nil {
 		return echoContext.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Internal Server Error",

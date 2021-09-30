@@ -21,7 +21,7 @@ func NewHandler(userServ users.Service) *Presenter {
 }
 
 func (handler *Presenter) Create(echoContext echo.Context) error {
-	var req request.UserInsert
+	var req request.Users
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
@@ -42,14 +42,21 @@ func (handler *Presenter) Create(echoContext echo.Context) error {
 }
 
 func (handler *Presenter) Update(echoContext echo.Context) error{
-	var req request.UserUpdate
+	idstr := echoContext.Param("id")
+	id, err := strconv.Atoi(idstr)
+	if err != nil{
+		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Bad Request",
+		})
+	}
+	var req request.Users
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
-	domain := request.ToDomainUpdate(req)
-	resp, err := handler.serviceUser.Update(domain)
+	domain := request.ToDomain(req)
+	resp, err := handler.serviceUser.Update(domain, id)
 	if err != nil {
 		return echoContext.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Internal Server Error",

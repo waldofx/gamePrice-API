@@ -29,13 +29,13 @@ func (repo *repoGames) Insert(game *games.Domain) (*games.Domain, error) {
 	return record, nil
 }
 
-func (repo *repoGames) Update(game *games.Domain) (*games.Domain, error) {
+func (repo *repoGames) Update(game *games.Domain, id int) (*games.Domain, error) {
 	recordGame := FromDomainUpdate(*game)
-	if err := repo.DBConn.Where("id=?", recordGame.ID).Updates(&recordGame).Error; err != nil {
+	if err := repo.DBConn.Where("id=?", id).Updates(&recordGame).Error; err != nil {
 		return &games.Domain{}, err
 	}
 
-	record, err := repo.FindByID(int(recordGame.ID))
+	record, err := repo.FindByID(int(id))
 	if err != nil {
 		return &games.Domain{}, err
 	}

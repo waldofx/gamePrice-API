@@ -35,9 +35,9 @@ func (servGame *serviceGames) FindByID(id int) (*Domain, error) {
 	return result, nil
 }
 
-func (servGame *serviceGames) Update(game *Domain) (*Domain, error) {
+func (servGame *serviceGames) Update(game *Domain, id int) (*Domain, error) {
 	//return &Domain{}, nil
-	result, err := servGame.repository.Update(game)
+	result, err := servGame.repository.Update(game, id)
 	if err != nil {
 		return &Domain{}, err
 	}
