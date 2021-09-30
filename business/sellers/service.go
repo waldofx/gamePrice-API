@@ -36,7 +36,6 @@ func (servSeller *serviceSellers) FindByID(id int) (*Domain, error) {
 }
 
 func (servSeller *serviceSellers) Update(seller *Domain) (*Domain, error) {
-	//return &Domain{}, nil
 	result, err := servSeller.repository.Update(seller)
 	if err != nil {
 		return &Domain{}, err

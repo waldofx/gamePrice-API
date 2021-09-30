@@ -5,14 +5,14 @@ import (
 )
 
 type SellerInsert struct {
-	Name    	string `json:"name"`
-	URL    		string `json:"url"`
+	Name    	string 	`json:"name"`
+	URL    		string 	`json:"url"`
 }
 
 type SellerUpdate struct {
-	ID 			int `json:"id"`
-	Name    	string `json:"name"`
-	URL    		string `json:"url"`
+	ID 			int 	`json:"id"`
+	Name    	string 	`json:"name"`
+	URL    		string 	`json:"url"`
 }
 
 func ToDomain(request SellerInsert) *sellers.Domain {
