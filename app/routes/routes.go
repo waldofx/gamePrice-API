@@ -2,6 +2,7 @@ package routes
 
 import (
 	"gameprice-api/app/presenter/games"
+	"gameprice-api/app/presenter/products"
 	"gameprice-api/app/presenter/sellers"
 	"gameprice-api/app/presenter/users"
 
@@ -12,6 +13,7 @@ type HandlerList struct {
 	GameHandler games.Presenter
 	SellerHandler sellers.Presenter
 	UserHandler users.Presenter
+	ProductHandler products.Presenter
 }
 
 func (handler *HandlerList) RouteRegister(e *echo.Echo) {
@@ -35,4 +37,11 @@ func (handler *HandlerList) RouteRegister(e *echo.Echo) {
 	users.GET("/:id", handler.UserHandler.ReadID)
 	users.PUT("/update", handler.UserHandler.Update)
 	users.DELETE("/:id", handler.UserHandler.Delete)
+
+	products := e.Group("products")
+	products.POST("/insert", handler.ProductHandler.Create)
+	products.GET("/all", handler.ProductHandler.ReadAll)
+	products.GET("/:id", handler.ProductHandler.ReadID)
+	products.PUT("/update", handler.ProductHandler.Update)
+	products.DELETE("/:id", handler.ProductHandler.Delete)
 }
