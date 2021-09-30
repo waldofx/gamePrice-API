@@ -5,6 +5,7 @@ import (
 	"gameprice-api/app/presenter/products"
 	"gameprice-api/app/presenter/sellers"
 	"gameprice-api/app/presenter/users"
+	"gameprice-api/app/presenter/wishes"
 
 	"github.com/labstack/echo/v4"
 )
@@ -14,6 +15,7 @@ type HandlerList struct {
 	SellerHandler sellers.Presenter
 	UserHandler users.Presenter
 	ProductHandler products.Presenter
+	WishHandler wishes.Presenter
 }
 
 func (handler *HandlerList) RouteRegister(e *echo.Echo) {
@@ -44,4 +46,11 @@ func (handler *HandlerList) RouteRegister(e *echo.Echo) {
 	products.GET("/:id", handler.ProductHandler.ReadID)
 	products.PUT("/:id", handler.ProductHandler.Update)
 	products.DELETE("/:id", handler.ProductHandler.Delete)
+
+	wishes := e.Group("wishes")
+	wishes.POST("/insert", handler.ProductHandler.Create)
+	wishes.GET("/all", handler.ProductHandler.ReadAll)
+	wishes.GET("/:id", handler.ProductHandler.ReadID)
+	wishes.PUT("/:id", handler.ProductHandler.Update)
+	wishes.DELETE("/:id", handler.ProductHandler.Delete)
 }
