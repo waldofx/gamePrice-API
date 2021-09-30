@@ -29,15 +29,6 @@ func ToDomain(rec Users) users.Domain {
 
 func FromDomain(domain users.Domain) Users {
 	return Users{
-		Name:   	domain.Name,
-		Email:  	domain.Email,
-		Password:	domain.Password,
-	}
-}
-
-
-func FromDomainUpdate(domain users.Domain) Users {
-	return Users{
 		ID: 		uint(domain.ID),
 		Name:    	domain.Name,
 		Email:  	domain.Email,

@@ -30,12 +30,12 @@ func (repo *repoUsers) Insert(user *users.Domain) (*users.Domain, error) {
 }
 
 func (repo *repoUsers) Update(user *users.Domain, id int) (*users.Domain, error) {
-	recordUser := FromDomainUpdate(*user)
+	recordUser := FromDomain(*user)
 	if err := repo.DBConn.Where("id=?", id).Updates(&recordUser).Error; err != nil {
 		return &users.Domain{}, err
 	}
 
-	record, err := repo.FindByID(int(id))
+	record, err := repo.FindByID(int(recordUser.ID))
 	if err != nil {
 		return &users.Domain{}, err
 	}
@@ -61,7 +61,7 @@ func (repo *repoUsers) FindAll() ([]users.Domain, error) {
 }
 
 func (repo *repoUsers) Delete(user *users.Domain, id int) (string, error) {
-	recordUser := FromDomainUpdate(*user)
+	recordUser := FromDomain(*user)
 	if err := repo.DBConn.Delete(&recordUser).Error; err != nil{
 		return "", err
 	}

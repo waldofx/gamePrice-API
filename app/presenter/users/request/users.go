@@ -5,6 +5,7 @@ import (
 )
 
 type Users struct {
+	ID			int    	`json:"id"`
 	Name   		string	`json:"name"`
 	Email  	  	string	`json:"email"`
 	Password	string	`json:"password"`
@@ -12,6 +13,7 @@ type Users struct {
 
 func ToDomain(request Users) *users.Domain {
 	return &users.Domain{
+		ID: request.ID,
 		Name: request.Name,
 		Email: request.Email,
 		Password: request.Password,

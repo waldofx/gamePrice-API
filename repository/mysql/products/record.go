@@ -35,15 +35,6 @@ func ToDomain(rec Products) products.Domain {
 
 func FromDomain(domain products.Domain) Products {
 	return Products{
-		GameID: 	domain.GameID,
-		SellerID: 	domain.SellerID,
-		Price: 		domain.Price,
-	}
-}
-
-
-func FromDomainUpdate(domain products.Domain) Products {
-	return Products{
 		ID: 		uint(domain.ID),
 		GameID: 	domain.GameID,
 		SellerID: 	domain.SellerID,

@@ -30,12 +30,12 @@ func (repo *repoProducts) Insert(product *products.Domain) (*products.Domain, er
 }
 
 func (repo *repoProducts) Update(product *products.Domain, id int) (*products.Domain, error) {
-	recordProduct := FromDomainUpdate(*product)
+	recordProduct := FromDomain(*product)
 	if err := repo.DBConn.Where("id=?", id).Updates(&recordProduct).Error; err != nil {
 		return &products.Domain{}, err
 	}
 
-	record, err := repo.FindByID(int(id))
+	record, err := repo.FindByID(int(recordProduct.ID))
 	if err != nil {
 		return &products.Domain{}, err
 	}
@@ -61,7 +61,7 @@ func (repo *repoProducts) FindAll() ([]products.Domain, error) {
 }
 
 func (repo *repoProducts) Delete(product *products.Domain, id int) (string, error) {
-	recordProduct := FromDomainUpdate(*product)
+	recordProduct := FromDomain(*product)
 	if err := repo.DBConn.Delete(&recordProduct).Error; err != nil{
 		return "", err
 	}

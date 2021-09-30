@@ -30,12 +30,12 @@ func (repo *repoGames) Insert(game *games.Domain) (*games.Domain, error) {
 }
 
 func (repo *repoGames) Update(game *games.Domain, id int) (*games.Domain, error) {
-	recordGame := FromDomainUpdate(*game)
+	recordGame := FromDomain(*game)
 	if err := repo.DBConn.Where("id=?", id).Updates(&recordGame).Error; err != nil {
 		return &games.Domain{}, err
 	}
 
-	record, err := repo.FindByID(int(id))
+	record, err := repo.FindByID(int(recordGame.ID))
 	if err != nil {
 		return &games.Domain{}, err
 	}
@@ -61,7 +61,7 @@ func (repo *repoGames) FindAll() ([]games.Domain, error) {
 }
 
 func (repo *repoGames) Delete(game *games.Domain, id int) (string, error) {
-	recordGame := FromDomainUpdate(*game)
+	recordGame := FromDomain(*game)
 	if err := repo.DBConn.Delete(&recordGame).Error; err != nil{
 		return "", err
 	}
