@@ -36,7 +36,6 @@ func (servUser *serviceUsers) FindByID(id int) (*Domain, error) {
 }
 
 func (servUser *serviceUsers) Update(user *Domain) (*Domain, error) {
-	//return &Domain{}, nil
 	result, err := servUser.repository.Update(user)
 	if err != nil {
 		return &Domain{}, err
