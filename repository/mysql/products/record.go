@@ -19,6 +19,12 @@ type Products struct {
 	Price	  		int
 }
 
+type SteamAPI struct {
+	AppID			int
+	Name			string
+	Final			int
+}
+
 func ToDomain(rec Products) products.Domain {
 	fmt.Printf("%+v", rec)
 	return products.Domain{
