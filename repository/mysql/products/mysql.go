@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"strconv"
 
 	"gorm.io/gorm"
 )
@@ -75,8 +74,6 @@ func (repo *repoProducts) Delete(product *products.Domain, id int) (string, erro
 
 
 //GET PRICE
-
-
 func (repo *repoProducts) Insert(product *products.Domain) (*products.Domain, error) {
 	recordProduct := FromDomain(*product)
 	if err := repo.DBConn.Create(&recordProduct).Error; err != nil {
@@ -98,7 +95,7 @@ func (repo *repoProducts) Insert(product *products.Domain) (*products.Domain, er
 
 //third-party
 func (repo *repoProducts) GetPrice(name string) (int, error){
-	var steamapi SteamAPI
+	var steamname SteamName
 	endpoint := "https://steamcommunity.com/actions/SearchApps/"
 	resp, err := http.NewRequest("GET", endpoint+url.QueryEscape(name), nil)
 	if err != nil {
@@ -110,20 +107,20 @@ func (repo *repoProducts) GetPrice(name string) (int, error){
 		return 0, err
 	}
 
-	json.Unmarshal(bodybytes, &steamapi)
-	appid := steamapi.AppID
+	json.Unmarshal(bodybytes, &steamname)
+	appid := steamname.Appid
 	price, err := repo.GetData(appid)
 	defer resp.Body.Close()
 	return price, err
+	//return appid, err
 }
 
 //get data price
-func (repo *repoProducts) GetData(appid int) (int, error){
+func (repo *repoProducts) GetData(appid string) (int, error){
 	var steamapi SteamAPI
 	endpoint := "https://store.steampowered.com/api/appdetails?"
 	filters := "filters=basic,price_overview&appids="
-	appid2 := strconv.Itoa(appid)
-	resp, err := http.NewRequest("GET", endpoint+filters+appid2, nil)
+	resp, err := http.NewRequest("GET", endpoint+filters+appid, nil)
 	if err != nil {
 		return 0, err
 	}
@@ -134,7 +131,7 @@ func (repo *repoProducts) GetData(appid int) (int, error){
 	}
 
 	json.Unmarshal(bodybytes, &steamapi)
-	price := steamapi.Final
+	price := steamapi.Num1238810.Data.PriceOverview.Final
 	defer resp.Body.Close()
 	return price, err
 }

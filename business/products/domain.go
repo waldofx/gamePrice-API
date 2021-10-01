@@ -31,5 +31,5 @@ type Repository interface {
 	Update(product *Domain, id int) (*Domain, error)
 	Delete(product *Domain, id int) (string, error)
 	GetPrice(name string) (int, error)
-	GetData(appid int) (int, error)
+	GetData(appid string) (int, error)
 }
