@@ -1,17 +1,15 @@
 package products
 
 import (
-	"encoding/json"
 	"gameprice-api/business/products"
-	"io"
-	"net/http"
-	"net/url"
+	steamapis "gameprice-api/business/steamapi"
 
 	"gorm.io/gorm"
 )
 
 type repoProducts struct {
 	DBConn *gorm.DB
+	RepoAPI      steamapis.Repository
 }
 
 func NewRepoMySQL(db *gorm.DB) products.Repository {
@@ -72,7 +70,6 @@ func (repo *repoProducts) Delete(product *products.Domain, id int) (string, erro
 	return "Data Deleted.", nil
 }
 
-
 //GET PRICE
 func (repo *repoProducts) Insert(product *products.Domain) (*products.Domain, error) {
 	recordProduct := FromDomain(*product)
@@ -80,11 +77,15 @@ func (repo *repoProducts) Insert(product *products.Domain) (*products.Domain, er
 		return &products.Domain{}, err
 	}
 
-	newprice, err := repo.GetPrice(recordProduct.Game.Name)
+	appid, err := repo.RepoAPI.GetID(recordProduct.Game.Name)
 	if err != nil {
 		return &products.Domain{}, err
 	}
-	recordProduct.Price = newprice
+	newprice, err := repo.RepoAPI.GetData(appid.AppID)
+	if err != nil {
+		return &products.Domain{}, err
+	}
+	recordProduct.Price = newprice.Price
 
 	record, err := repo.FindByID(int(recordProduct.ID))
 	if err != nil {
@@ -93,45 +94,64 @@ func (repo *repoProducts) Insert(product *products.Domain) (*products.Domain, er
 	return record, nil
 }
 
-//third-party
-func (repo *repoProducts) GetPrice(name string) (int, error){
-	var steamname SteamName
-	endpoint := "https://steamcommunity.com/actions/SearchApps/"
-	resp, err := http.NewRequest("GET", endpoint+url.QueryEscape(name), nil)
-	if err != nil {
-		return 0, err
-	}
+// //GET PRICE
+// func (repo *repoProducts) Insert(product *products.Domain) (*products.Domain, error) {
+// 	recordProduct := FromDomain(*product)
+// 	if err := repo.DBConn.Create(&recordProduct).Error; err != nil {
+// 		return &products.Domain{}, err
+// 	}
 
-	bodybytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
+// 	newprice, err := repo.GetPrice(recordProduct.Game.Name)
+// 	if err != nil {
+// 		return &products.Domain{}, err
+// 	}
+// 	recordProduct.Price = newprice
 
-	json.Unmarshal(bodybytes, &steamname)
-	appid := steamname.Appid
-	price, err := repo.GetData(appid)
-	defer resp.Body.Close()
-	return price, err
-	//return appid, err
-}
+// 	record, err := repo.FindByID(int(recordProduct.ID))
+// 	if err != nil {
+// 		return &products.Domain{}, err
+// 	}
+// 	return record, nil
+// }
 
-//get data price
-func (repo *repoProducts) GetData(appid string) (int, error){
-	var steamapi SteamAPI
-	endpoint := "https://store.steampowered.com/api/appdetails?"
-	filters := "filters=basic,price_overview&appids="
-	resp, err := http.NewRequest("GET", endpoint+filters+appid, nil)
-	if err != nil {
-		return 0, err
-	}
+// //third-party
+// func (repo *repoProducts) GetPrice(name string) (int, error){
+// 	var steamname SteamName
+// 	endpoint := "https://steamcommunity.com/actions/SearchApps/"
+// 	resp, err := http.NewRequest("GET", endpoint+url.QueryEscape(name), nil)
+// 	if err != nil {
+// 		return 0, err
+// 	}
 
-	bodybytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
+// 	bodybytes, err := io.ReadAll(resp.Body)
+// 	if err != nil {
+// 		return 0, err
+// 	}
 
-	json.Unmarshal(bodybytes, &steamapi)
-	price := steamapi.Num1238810.Data.PriceOverview.Final
-	defer resp.Body.Close()
-	return price, err
-}
+// 	json.Unmarshal(bodybytes, &steamname)
+// 	appid := steamname.Appid
+// 	price, err := repo.GetData(appid)
+// 	defer resp.Body.Close()
+// 	return price, err
+// }
+
+// //get data price
+// func (repo *repoProducts) GetData(appid string) (int, error){
+// 	var steamapi SteamAPI
+// 	endpoint := "https://store.steampowered.com/api/appdetails?"
+// 	filters := "filters=basic,price_overview&appids="
+// 	resp, err := http.NewRequest("GET", endpoint+filters+appid, nil)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+
+// 	bodybytes, err := io.ReadAll(resp.Body)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+
+// 	json.Unmarshal(bodybytes, &steamapi)
+// 	price := steamapi.Num1238810.Data.PriceOverview.Final
+// 	defer resp.Body.Close()
+// 	return price, err
+// }

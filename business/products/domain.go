@@ -30,6 +30,6 @@ type Repository interface {
 	FindByID(id int) (*Domain, error)
 	Update(product *Domain, id int) (*Domain, error)
 	Delete(product *Domain, id int) (string, error)
-	GetPrice(name string) (int, error)
-	GetData(appid string) (int, error)
+	// GetPrice(name string) (int, error)
+	// GetData(appid string) (int, error)
 }
