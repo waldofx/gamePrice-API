@@ -2,7 +2,7 @@ package products
 
 import (
 	"gameprice-api/business/products"
-	steamapis "gameprice-api/business/steamapi"
+	"gameprice-api/business/steamapis"
 
 	"gorm.io/gorm"
 )
@@ -77,15 +77,15 @@ func (repo *repoProducts) Insert(product *products.Domain) (*products.Domain, er
 		return &products.Domain{}, err
 	}
 
-	appid, err := repo.RepoAPI.GetID(recordProduct.Game.Name)
-	if err != nil {
-		return &products.Domain{}, err
-	}
-	newprice, err := repo.RepoAPI.GetData(appid.AppID)
-	if err != nil {
-		return &products.Domain{}, err
-	}
-	recordProduct.Price = newprice.Price
+	// appid, err := repo.RepoAPI.GetID(recordProduct.Game.Name)
+	// if err != nil {
+	// 	return &products.Domain{}, err
+	// }
+	// newprice, err := repo.RepoAPI.GetData(appid.AppID)
+	// if err != nil {
+	// 	return &products.Domain{}, err
+	// }
+	// recordProduct.Price = newprice.Price
 
 	record, err := repo.FindByID(int(recordProduct.ID))
 	if err != nil {

@@ -1,12 +1,16 @@
 package products
 
+import "gameprice-api/business/steamapis"
+
 type serviceProducts struct {
 	repository Repository
+	reposteam steamapis.Repository
 }
 
-func NewService(repoProduct Repository) Service {
+func NewService(repoProduct Repository, rs steamapis.Repository) Service {
 	return &serviceProducts{
 		repository: repoProduct,
+		reposteam: rs,
 	}
 }
 
@@ -15,6 +19,16 @@ func (servProduct *serviceProducts) Append(product *Domain) (*Domain, error) {
 	if err != nil {
 		return &Domain{}, err
 	}
+
+	appid, err := servProduct.reposteam.GetID(result.Game)
+	if err != nil {
+		return &Domain{}, err
+	}
+	newprice, err := servProduct.reposteam.GetData(appid.AppID)
+	if err != nil {
+		return &Domain{}, err
+	}
+	result.Price = newprice.Price
 
 	return result, nil
 }

@@ -20,6 +20,8 @@ import (
 	_servUsers "gameprice-api/business/users"
 	_repoUsers "gameprice-api/repository/mysql/users"
 
+	_repoSteamapis "gameprice-api/repository/thirdparty/steamapis"
+
 	_handlerProducts "gameprice-api/app/presenter/products"
 	_servProducts "gameprice-api/business/products"
 	_repoProducts "gameprice-api/repository/mysql/products"
@@ -55,6 +57,8 @@ func InitDB(status string) *gorm.DB {
 		&_repoUsers.Users{},
 		&_repoProducts.Products{},
 		&_repoWishes.Wishes{},
+		&_repoSteamapis.SteamName{},
+		&_repoSteamapis.SteamAPI{}, //gagal migrate disini
 	)
 
 	return DB
@@ -74,8 +78,9 @@ func main() {
 	usersRepo := _repoUsers.NewRepoMySQL(db)
 	usersService := _servUsers.NewService(usersRepo)
 	usersHandler := _handlerUsers.NewHandler(usersService)
+	steamapisRepo := _repoSteamapis.NewRepo()
 	productsRepo := _repoProducts.NewRepoMySQL(db)
-	productsService := _servProducts.NewService(productsRepo)
+	productsService := _servProducts.NewService(productsRepo, steamapisRepo)
 	productsHandler := _handlerProducts.NewHandler(productsService)
 	wishesRepo := _repoWishes.NewRepoMySQL(db)
 	wishesService := _servWishes.NewService(wishesRepo)
