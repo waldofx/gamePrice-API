@@ -42,6 +42,9 @@ func (steam *Steam) GetID(gname string) (steamapis.Domain, error){
 	// bodybytes, _ := io.ReadAll(resp.Body)
 	// json.Unmarshal(bodybytes, &steamname)
 
+	// resp.ParseForm()
+	// resp.Form = resp.ParseForm()
+
 	steamname := SteamName{}
 	err = json.NewDecoder(resp.Body).Decode(&steamname)
 	fmt.Println(err, steamname) //debug
@@ -62,12 +65,16 @@ func (steam *Steam) GetData(appid string) (steamapis.Domain, error){
 	if err != nil {
 		return steamapis.Domain{}, err
 	}
+	fmt.Println(endpoint+filters+appid) //debug
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return steamapis.Domain{}, err
 	}
+	fmt.Println(resp) //debug
+	fmt.Println(resp.Body) //debug
+	fmt.Println("Finish respponse!") //debug
 
 	defer resp.Body.Close()
 	//bodybytes, _ := io.ReadAll(resp.Body)
