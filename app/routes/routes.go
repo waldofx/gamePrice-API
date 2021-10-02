@@ -8,9 +8,11 @@ import (
 	"gameprice-api/app/presenter/wishes"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type HandlerList struct {
+	JWTMiddleware  middleware.JWTConfig
 	GameHandler games.Presenter
 	SellerHandler sellers.Presenter
 	UserHandler users.Presenter
@@ -39,6 +41,8 @@ func (handler *HandlerList) RouteRegister(e *echo.Echo) {
 	users.GET("/:id", handler.UserHandler.ReadID)
 	users.PUT("/:id", handler.UserHandler.Update)
 	users.DELETE("/:id", handler.UserHandler.Delete)
+	users.POST("/register", handler.UserHandler.Store)
+	users.GET("/token", handler.UserHandler.CreateToken)
 
 	products := e.Group("products")
 	products.POST("/insert", handler.ProductHandler.Create)

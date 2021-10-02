@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
@@ -30,12 +32,21 @@ import (
 	_servWishes "gameprice-api/business/wishes"
 	_repoWishes "gameprice-api/repository/mysql/wishes"
 
-	_middlewares "gameprice-api/app/middlewares"
+	_middleware "gameprice-api/app/middleware"
 	_routes "gameprice-api/app/routes"
 )
 
-const JWT_SECRET string = "testmvc"
-const JWT_EXP int = 1
+func init() {
+	viper.SetConfigFile(`app/config/config.json`)
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	if viper.GetBool(`debug`) {
+		log.Println("Service RUN on DEBUG mode")
+	}
+}
 
 func InitDB(status string) *gorm.DB {
 	db := "project"
@@ -66,6 +77,15 @@ func InitDB(status string) *gorm.DB {
 
 func main() {
 	db := InitDB("")
+
+	configJWT := _middleware.ConfigJWT{
+		SecretJWT:       viper.GetString(`jwt.secret`),
+		ExpiresDuration: viper.GetInt(`jwt.expired`),
+	}
+
+	timeoutContext := time.Duration(viper.GetInt("context.timeout")) * time.Second
+
+
 	e := echo.New()
 
 	// factory of domain
@@ -76,7 +96,7 @@ func main() {
 	sellersService := _servSellers.NewService(sellersRepo)
 	sellersHandler := _handlerSellers.NewHandler(sellersService)
 	usersRepo := _repoUsers.NewRepoMySQL(db)
-	usersService := _servUsers.NewService(usersRepo)
+	usersService := _servUsers.NewService(usersRepo, &configJWT, timeoutContext)
 	usersHandler := _handlerUsers.NewHandler(usersService)
 	steamapisRepo := _repoSteamapis.NewRepo()
 	productsRepo := _repoProducts.NewRepoMySQL(db)
@@ -88,6 +108,7 @@ func main() {
 
 	// initial of routes
 	routesInit := _routes.HandlerList{
+		JWTMiddleware:  configJWT.Init(),
 		GameHandler: *gamesHandler,
 		SellerHandler: *sellersHandler,
 		UserHandler: *usersHandler,
@@ -97,6 +118,6 @@ func main() {
 	routesInit.RouteRegister(e)
 
 
-	_middlewares.LogMiddlewareInit(e)
+	_middleware.LogMiddlewareInit(e)
 	log.Fatal(e.Start("localhost:8080"))
 }
