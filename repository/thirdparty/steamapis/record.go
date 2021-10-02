@@ -12,7 +12,8 @@ type SteamName struct {
 	Logo  string `json:"logo"`
 }
 
-type SteamAPI struct {
+type SteamAPI struct { //[error] invalid field found for struct ()'s field PriceOverview: define a valid foreign key for relations or implement the Valuer/Scanner interface 
+
 	Num1238810 struct {
 		Success bool `json:"success"`
 		Data    struct {

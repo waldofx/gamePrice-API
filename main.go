@@ -57,8 +57,8 @@ func InitDB(status string) *gorm.DB {
 		&_repoUsers.Users{},
 		&_repoProducts.Products{},
 		&_repoWishes.Wishes{},
-		&_repoSteamapis.SteamName{},
-		&_repoSteamapis.SteamAPI{}, //gagal migrate disini
+		// &_repoSteamapis.SteamName{},
+		// &_repoSteamapis.SteamAPI{}, //gagal migrate disini
 	)
 
 	return DB
