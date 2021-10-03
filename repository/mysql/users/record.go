@@ -20,7 +20,6 @@ func ToDomain(rec Users) users.Domain {
 	fmt.Printf("%+v", rec)
 	return users.Domain{
 		ID:        	int(rec.ID),
-		Name:      	rec.Name,
 		Username: 	rec.Username,
 		Email:  	rec.Email,
 		Password:	rec.Password,
@@ -32,7 +31,6 @@ func ToDomain(rec Users) users.Domain {
 func FromDomain(domain users.Domain) Users {
 	return Users{
 		ID: 		uint(domain.ID),
-		Name:    	domain.Name,
 		Username: 	domain.Username,
 		Email:  	domain.Email,
 		Password:	domain.Password,

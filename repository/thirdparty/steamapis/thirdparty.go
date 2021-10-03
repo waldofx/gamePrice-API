@@ -10,12 +10,12 @@ import (
 )
 
 type Steam struct {
-	Client http.Client
+	httpClient http.Client
 }
 
-func NewRepo() *Steam{
+func NewRepo() steamapis.Repository{
 	return &Steam{
-		Client: http.Client{},
+		httpClient: http.Client{},
 	}
 }
 
@@ -28,15 +28,16 @@ func (steam *Steam) GetID(gname string) (steamapis.Domain, error){
 		return steamapis.Domain{}, err
 	}
 	fmt.Println(endpoint+url.QueryEscape(name)) //debug
+	fmt.Println(req) //debug
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	// client := &http.Client{}
+	resp, err := steam.httpClient.Do(req)
 	if err != nil {
 		return steamapis.Domain{}, err
 	}
 	fmt.Println(resp) //debug
 	fmt.Println(resp.Body) //debug
-	fmt.Println("Finish respponse!") //debug
+	fmt.Println("Above me is resp.body!") //debug
 
 	defer resp.Body.Close()
 	// bodybytes, _ := io.ReadAll(resp.Body)

@@ -36,13 +36,13 @@ func (handler *HandlerList) RouteRegister(e *echo.Echo) {
 	sellers.DELETE("/:id", handler.SellerHandler.Delete)
 
 	users := e.Group("users")
-	users.POST("/insert", handler.UserHandler.Create)
+	users.POST("/register", handler.UserHandler.Store)
+	users.GET("/token", handler.UserHandler.CreateToken)
+	// users.POST("/insert", handler.UserHandler.Create)
 	users.GET("/all", handler.UserHandler.ReadAll)
 	users.GET("/:id", handler.UserHandler.ReadID)
 	users.PUT("/:id", handler.UserHandler.Update)
 	users.DELETE("/:id", handler.UserHandler.Delete)
-	users.POST("/register", handler.UserHandler.Store)
-	users.GET("/token", handler.UserHandler.CreateToken)
 
 	products := e.Group("products")
 	products.POST("/insert", handler.ProductHandler.Create)

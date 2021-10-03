@@ -8,7 +8,7 @@ import (
 type Wishes struct {
 	ID        	int       	`json:"id"`
 	UserID		int			`json:"user_id"`
-	Name		string		`json:"name"`
+	Username	string		`json:"username"`
 	GameID		int			`json:"game_id"`
 	GameName	string		`json:"game_name"`
 	SellerID	int 		`json:"seller_id"`
@@ -21,7 +21,7 @@ type Wishes struct {
 func FromDomain(domain wishes.Domain) Wishes {
 	return Wishes{
 		ID:        	domain.ID,
-		Name:      	domain.Name,
+		Username:   domain.Username,
 		UserID:     domain.UserID,
 		GameID:  	domain.GameID,
 		GameName: 	domain.GameName,
