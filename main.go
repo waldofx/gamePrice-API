@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
@@ -20,16 +22,31 @@ import (
 	_servUsers "gameprice-api/business/users"
 	_repoUsers "gameprice-api/repository/mysql/users"
 
+	_repoSteamapis "gameprice-api/repository/thirdparty/steamapis"
+
 	_handlerProducts "gameprice-api/app/presenter/products"
 	_servProducts "gameprice-api/business/products"
 	_repoProducts "gameprice-api/repository/mysql/products"
 
-	_middlewares "gameprice-api/app/middlewares"
+	_handlerWishes "gameprice-api/app/presenter/wishes"
+	_servWishes "gameprice-api/business/wishes"
+	_repoWishes "gameprice-api/repository/mysql/wishes"
+
+	_middleware "gameprice-api/app/middleware"
 	_routes "gameprice-api/app/routes"
 )
 
-const JWT_SECRET string = "testmvc"
-const JWT_EXP int = 1
+func init() {
+	viper.SetConfigFile(`app/config/config.json`)
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	if viper.GetBool(`debug`) {
+		log.Println("Service RUN on DEBUG mode")
+	}
+}
 
 func InitDB(status string) *gorm.DB {
 	db := "project"
@@ -50,6 +67,9 @@ func InitDB(status string) *gorm.DB {
 		&_repoSellers.Sellers{},
 		&_repoUsers.Users{},
 		&_repoProducts.Products{},
+		&_repoWishes.Wishes{},
+		// &_repoSteamapis.SteamName{},
+		// &_repoSteamapis.SteamAPI{}, //gagal migrate disini
 	)
 
 	return DB
@@ -57,6 +77,15 @@ func InitDB(status string) *gorm.DB {
 
 func main() {
 	db := InitDB("")
+
+	configJWT := _middleware.ConfigJWT{
+		SecretJWT:       viper.GetString(`jwt.secret`),
+		ExpiresDuration: viper.GetInt(`jwt.expired`),
+	}
+
+	timeoutContext := time.Duration(viper.GetInt("context.timeout")) * time.Second
+
+
 	e := echo.New()
 
 	// factory of domain
@@ -67,22 +96,28 @@ func main() {
 	sellersService := _servSellers.NewService(sellersRepo)
 	sellersHandler := _handlerSellers.NewHandler(sellersService)
 	usersRepo := _repoUsers.NewRepoMySQL(db)
-	usersService := _servUsers.NewService(usersRepo)
+	usersService := _servUsers.NewService(usersRepo, &configJWT, timeoutContext)
 	usersHandler := _handlerUsers.NewHandler(usersService)
+	steamapisRepo := _repoSteamapis.NewRepo()
 	productsRepo := _repoProducts.NewRepoMySQL(db)
-	productsService := _servProducts.NewService(productsRepo)
+	productsService := _servProducts.NewService(productsRepo, steamapisRepo)
 	productsHandler := _handlerProducts.NewHandler(productsService)
+	wishesRepo := _repoWishes.NewRepoMySQL(db)
+	wishesService := _servWishes.NewService(wishesRepo)
+	wishesHandler := _handlerWishes.NewHandler(wishesService)
 
 	// initial of routes
 	routesInit := _routes.HandlerList{
+		JWTMiddleware:  configJWT.Init(),
 		GameHandler: *gamesHandler,
 		SellerHandler: *sellersHandler,
 		UserHandler: *usersHandler,
 		ProductHandler: *productsHandler,
+		WishHandler: *wishesHandler,
 	}
 	routesInit.RouteRegister(e)
 
 
-	_middlewares.LogMiddlewareInit(e)
+	_middleware.LogMiddlewareInit(e)
 	log.Fatal(e.Start("localhost:8080"))
 }

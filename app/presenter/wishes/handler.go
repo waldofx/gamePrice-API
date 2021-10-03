@@ -1,10 +1,9 @@
-package users
+package wishes
 
 import (
-	presenter "gameprice-api/app/presenter"
-	"gameprice-api/app/presenter/users/request"
-	"gameprice-api/app/presenter/users/response"
-	"gameprice-api/business/users"
+	"gameprice-api/app/presenter/wishes/request"
+	"gameprice-api/app/presenter/wishes/response"
+	"gameprice-api/business/wishes"
 	"net/http"
 	"strconv"
 
@@ -12,58 +11,24 @@ import (
 )
 
 type Presenter struct {
-	serviceUser users.Service
+	serviceWish wishes.Service
 }
 
-func NewHandler(userServ users.Service) *Presenter {
+func NewHandler(wisheserv wishes.Service) *Presenter {
 	return &Presenter{
-		serviceUser: userServ,
+		serviceWish: wisheserv,
 	}
-}
-
-func (handler *Presenter) CreateToken(echoContext echo.Context) error {
-	ctx := echoContext.Request().Context()
-
-	username := echoContext.QueryParam("username")
-	password := echoContext.QueryParam("password")
-
-	token, err := handler.serviceUser.CreateToken(ctx, username, password)
-	if err != nil {
-		return presenter.NewErrorResponse(echoContext, http.StatusInternalServerError, err)
-	}
-
-	response := struct {
-		Token string `json:"token"`
-	}{Token: token}
-
-	return presenter.NewSuccessResponse(echoContext, response)
-}
-
-func (handler *Presenter) Store(echoContext echo.Context) error {
-	ctx := echoContext.Request().Context()
-
-	req := request.Users{}
-	if err := echoContext.Bind(&req); err != nil {
-		return presenter.NewErrorResponse(echoContext, http.StatusBadRequest, err)
-	}
-
-	err := handler.serviceUser.Store(ctx, request.ToDomain(req))
-	if err != nil {
-		return presenter.NewErrorResponse(echoContext, http.StatusInternalServerError, err)
-	}
-
-	return presenter.NewSuccessResponse(echoContext, "Successfully inserted")
 }
 
 func (handler *Presenter) Create(echoContext echo.Context) error {
-	var req request.Users
+	var req request.Wishes
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
 	domain := request.ToDomain(req)
-	resp, err := handler.serviceUser.Append(domain)
+	resp, err := handler.serviceWish.Append(domain)
 	if err != nil {
 		return echoContext.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Internal Server Error",
@@ -84,14 +49,14 @@ func (handler *Presenter) Update(echoContext echo.Context) error{
 			"message": "Bad Request",
 		})
 	}
-	var req request.Users
+	var req request.Wishes
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
 	domain := request.ToDomain(req)
-	resp, err := handler.serviceUser.Update(domain, id)
+	resp, err := handler.serviceWish.Update(domain, id)
 	if err != nil {
 		return echoContext.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Internal Server Error",
@@ -101,14 +66,14 @@ func (handler *Presenter) Update(echoContext echo.Context) error{
 }
 
 func (handler *Presenter) ReadAll(echoContext echo.Context) error{
-	users, err := handler.serviceUser.FindAll()
+	wishes, err := handler.serviceWish.FindAll()
 	if err != nil {
 		return echoContext.JSON(http.StatusBadRequest,  map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
 	return echoContext.JSON(http.StatusOK, map[string]interface{}{
-		"users": response.NewResponseArray(users),
+		"wishes": response.NewResponseArray(wishes),
 	})
 }
 
@@ -120,7 +85,7 @@ func (handler *Presenter) ReadID(echoContext echo.Context) error {
 			"message": "Bad Request",
 		})
 	}
-	resp, err :=  handler.serviceUser.FindByID(id)
+	resp, err :=  handler.serviceWish.FindByID(id)
 	if err != nil{
 		return echoContext.JSON(http.StatusNotFound, map[string]interface{}{
 			"message": "Not Found",
@@ -137,8 +102,8 @@ func(handler *Presenter) Delete(echoContext echo.Context) error{
 			"message": "Bad Request",
 		})
 	}
-	user, err1 := handler.serviceUser.FindByID(id)
-	result, err2 :=  handler.serviceUser.Delete(user, id)
+	wish, err1 := handler.serviceWish.FindByID(id)
+	result, err2 :=  handler.serviceWish.Delete(wish, id)
 
 	if err1 != nil{
 		return echoContext.JSON(http.StatusNotFound, map[string]interface{}{

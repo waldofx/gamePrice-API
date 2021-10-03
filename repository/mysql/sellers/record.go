@@ -27,14 +27,6 @@ func ToDomain(rec Sellers) sellers.Domain {
 
 func FromDomain(domain sellers.Domain) Sellers {
 	return Sellers{
-		Name:    domain.Name,
-		URL:     domain.URL,
-	}
-}
-
-
-func FromDomainUpdate(domain sellers.Domain) Sellers {
-	return Sellers{
 		ID: uint(domain.ID),
 		Name:    domain.Name,
 		URL:     domain.URL,

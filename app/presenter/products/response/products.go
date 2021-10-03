@@ -9,7 +9,7 @@ type Products struct {
 	ID        	int       	`json:"id"`
 	GameID		int			`json:"game_id"`
 	Game		string		`json:"game"`
-	SellerID		int			`json:"seller_id"`
+	SellerID		int		`json:"seller_id"`
 	Seller		string		`json:"seller"`
 	Price		int			`json:"price"`
 	CreatedAt 	time.Time 	`json:"created_at"`

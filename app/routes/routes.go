@@ -5,15 +5,19 @@ import (
 	"gameprice-api/app/presenter/products"
 	"gameprice-api/app/presenter/sellers"
 	"gameprice-api/app/presenter/users"
+	"gameprice-api/app/presenter/wishes"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type HandlerList struct {
+	JWTMiddleware  middleware.JWTConfig
 	GameHandler games.Presenter
 	SellerHandler sellers.Presenter
 	UserHandler users.Presenter
 	ProductHandler products.Presenter
+	WishHandler wishes.Presenter
 }
 
 func (handler *HandlerList) RouteRegister(e *echo.Echo) {
@@ -37,6 +41,8 @@ func (handler *HandlerList) RouteRegister(e *echo.Echo) {
 	users.GET("/:id", handler.UserHandler.ReadID)
 	users.PUT("/:id", handler.UserHandler.Update)
 	users.DELETE("/:id", handler.UserHandler.Delete)
+	users.POST("/register", handler.UserHandler.Store)
+	users.GET("/token", handler.UserHandler.CreateToken)
 
 	products := e.Group("products")
 	products.POST("/insert", handler.ProductHandler.Create)
@@ -44,4 +50,11 @@ func (handler *HandlerList) RouteRegister(e *echo.Echo) {
 	products.GET("/:id", handler.ProductHandler.ReadID)
 	products.PUT("/:id", handler.ProductHandler.Update)
 	products.DELETE("/:id", handler.ProductHandler.Delete)
+
+	wishes := e.Group("wishes")
+	wishes.POST("/insert", handler.WishHandler.Create)
+	wishes.GET("/all", handler.WishHandler.ReadAll)
+	wishes.GET("/:id", handler.WishHandler.ReadID)
+	wishes.PUT("/:id", handler.WishHandler.Update)
+	wishes.DELETE("/:id", handler.WishHandler.Delete)
 }

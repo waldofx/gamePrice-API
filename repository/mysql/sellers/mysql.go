@@ -30,7 +30,7 @@ func (repo *repoSellers) Insert(seller *sellers.Domain) (*sellers.Domain, error)
 }
 
 func (repo *repoSellers) Update(seller *sellers.Domain, id int) (*sellers.Domain, error) {
-	recordSeller := FromDomainUpdate(*seller)
+	recordSeller := FromDomain(*seller)
 	if err := repo.DBConn.Where("id=?", id).Updates(&recordSeller).Error; err != nil {
 		return &sellers.Domain{}, err
 	}
@@ -61,7 +61,7 @@ func (repo *repoSellers) FindAll() ([]sellers.Domain, error) {
 }
 
 func (repo *repoSellers) Delete(seller *sellers.Domain, id int) (string, error) {
-	recordSeller := FromDomainUpdate(*seller)
+	recordSeller := FromDomain(*seller)
 	if err := repo.DBConn.Delete(&recordSeller).Error; err != nil{
 		return "", err
 	}

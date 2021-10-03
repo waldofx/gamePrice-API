@@ -27,14 +27,6 @@ func ToDomain(rec Games) games.Domain {
 
 func FromDomain(domain games.Domain) Games {
 	return Games{
-		Name:    domain.Name,
-		Category:     domain.Category,
-	}
-}
-
-
-func FromDomainUpdate(domain games.Domain) Games {
-	return Games{
 		ID: uint(domain.ID),
 		Name:    domain.Name,
 		Category:     domain.Category,
