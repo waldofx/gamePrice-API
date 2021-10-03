@@ -8,7 +8,7 @@ import (
 type Domain struct {
 	ID        		int
 	UserID	  		int
-	Name      		string
+	Username      	string
 	GameID	  		int
 	SellerID		int
 	GameName      	string //products.Domain

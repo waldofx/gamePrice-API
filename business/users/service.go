@@ -71,14 +71,14 @@ func (servUser *serviceUsers) Store(ctx context.Context, userDomain *Domain) err
 }
 
 
-func (servUser *serviceUsers) Append(user *Domain) (*Domain, error) {
-	result, err := servUser.repository.Insert(user)
-	if err != nil {
-		return &Domain{}, err
-	}
+// func (servUser *serviceUsers) Append(user *Domain) (*Domain, error) {
+// 	result, err := servUser.repository.Insert(user)
+// 	if err != nil {
+// 		return &Domain{}, err
+// 	}
 
-	return result, nil
-}
+// 	return result, nil
+// }
 
 func (servUser *serviceUsers) FindAll() ([]Domain, error) {
 	result, err := servUser.repository.FindAll()

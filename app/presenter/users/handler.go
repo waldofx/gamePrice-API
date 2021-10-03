@@ -55,26 +55,26 @@ func (handler *Presenter) Store(echoContext echo.Context) error {
 	return presenter.NewSuccessResponse(echoContext, "Successfully inserted")
 }
 
-func (handler *Presenter) Create(echoContext echo.Context) error {
-	var req request.Users
-	if err := echoContext.Bind(&req); err != nil {
-		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message": "Bad Request",
-		})
-	}
-	domain := request.ToDomain(req)
-	resp, err := handler.serviceUser.Append(domain)
-	if err != nil {
-		return echoContext.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"message": "Internal Server Error",
-		})
-	}
+// func (handler *Presenter) Create(echoContext echo.Context) error {
+// 	var req request.Users
+// 	if err := echoContext.Bind(&req); err != nil {
+// 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
+// 			"message": "Bad Request",
+// 		})
+// 	}
+// 	domain := request.ToDomain(req)
+// 	resp, err := handler.serviceUser.Append(domain)
+// 	if err != nil {
+// 		return echoContext.JSON(http.StatusInternalServerError, map[string]interface{}{
+// 			"message": "Internal Server Error",
+// 		})
+// 	}
 
-	return echoContext.JSON(http.StatusOK, map[string]interface{}{
-		"message": "Data Inserted.",
-		"data": response.FromDomain(*resp),
-	})
-}
+// 	return echoContext.JSON(http.StatusOK, map[string]interface{}{
+// 		"message": "Data Inserted.",
+// 		"data": response.FromDomain(*resp),
+// 	})
+// }
 
 func (handler *Presenter) Update(echoContext echo.Context) error{
 	idstr := echoContext.Param("id")

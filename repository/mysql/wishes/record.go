@@ -27,7 +27,7 @@ func ToDomain(rec Wishes) wishes.Domain {
 	return wishes.Domain{
 		ID:        	int(rec.ID),
 		UserID: 	rec.UserID,
-		Name: 		rec.User.Name,
+		Username: 	rec.User.Username,
 		GameID: 	rec.GameID,
 		GameName: 	rec.Game.Name,
 		SellerID: 	rec.SellerID,
