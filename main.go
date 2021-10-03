@@ -113,7 +113,7 @@ func main() {
 		SellerHandler: *sellersHandler,
 		UserHandler: *usersHandler,
 		ProductHandler: *productsHandler,
-		WishHandler: *wishesHandler,
+		WishHandler: *wishesHandler, //wish masih kurang
 	}
 	routesInit.RouteRegister(e)
 
