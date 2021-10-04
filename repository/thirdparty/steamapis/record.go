@@ -1,7 +1,6 @@
 package steamapis
 
 import (
-	"fmt"
 	"gameprice-api/business/steamapis"
 )
 
@@ -27,7 +26,6 @@ type SteamAPI struct {
 }
 
 func (rec *SteamName) ToDomain() steamapis.Domain{
-	fmt.Printf("%+v", rec)
 	return steamapis.Domain{
 		AppID: rec.AppID,
 		Name: rec.Name,

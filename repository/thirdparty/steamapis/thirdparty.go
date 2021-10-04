@@ -2,7 +2,6 @@ package steamapis
 
 import (
 	"encoding/json"
-	"fmt"
 	steamapis "gameprice-api/business/steamapis"
 	"io"
 	"io/ioutil"
@@ -31,7 +30,6 @@ func (steam *Steam) GetID(gname string) (steamapis.Domain, error){
 		return steamapis.Domain{}, err
 	}
 
-	// client := &http.Client{}
 	resp, err := steam.httpClient.Do(req)
 	if err != nil {
 		return steamapis.Domain{}, err
@@ -45,13 +43,11 @@ func (steam *Steam) GetID(gname string) (steamapis.Domain, error){
 	if err != nil {
 		return steamapis.Domain{}, err
 	}
-	fmt.Println(" GetID sucess! 1") //debug
 	return steamname[0].ToDomain(), nil
 }
 
 //get data price
 func (steam *Steam) GetData(appid string) (steamapis.Domain, error){
-	//var steamapi SteamAPI
 	client := &http.Client{}
 	endpoint := "https://store.steampowered.com/api/appdetails?"
 	filters := "filters=price_overview&appids="
@@ -59,7 +55,6 @@ func (steam *Steam) GetData(appid string) (steamapis.Domain, error){
 	if err != nil {
 		return steamapis.Domain{}, err
 	}
-	fmt.Println(endpoint+filters+appid) //debug
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -72,7 +67,6 @@ func (steam *Steam) GetData(appid string) (steamapis.Domain, error){
 	_ = json.Unmarshal(bodybytes, &steamapi)
 
 
-	fmt.Println(err, steamapi) //debug
 	if err != nil {
 		return steamapis.Domain{}, err
 	}

@@ -38,7 +38,6 @@ func (handler *HandlerList) RouteRegister(e *echo.Echo) {
 	users := e.Group("users")
 	users.POST("/register", handler.UserHandler.Store)
 	users.GET("/token", handler.UserHandler.CreateToken)
-	// users.POST("/insert", handler.UserHandler.Create)
 	users.GET("/all", handler.UserHandler.ReadAll)
 	users.GET("/:id", handler.UserHandler.ReadID)
 	users.PUT("/:id", handler.UserHandler.Update)
@@ -53,7 +52,7 @@ func (handler *HandlerList) RouteRegister(e *echo.Echo) {
 
 	wishes := e.Group("wishes")
 	wishes.POST("/insert", handler.WishHandler.Create)
-	wishes.GET("/all", handler.WishHandler.ReadAll)
+	wishes.GET("/all", handler.WishHandler.ReadAll, middleware.JWTWithConfig(handler.JWTMiddleware))
 	wishes.GET("/:id", handler.WishHandler.ReadID)
 	wishes.PUT("/:id", handler.WishHandler.Update)
 	wishes.DELETE("/:id", handler.WishHandler.Delete)

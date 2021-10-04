@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	gogapis "gameprice-api/business/gogapis"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -19,8 +20,7 @@ func NewRepo() gogapis.Repository{
 
 func (gog *RepoGog) GetData(appid string) (gogapis.Domain, error){
 	var gogapi GOG
-	// var appid int
-	// appid,_ = strconv.Atoi(GOGID)
+	client := &http.Client{}
 	endpoint := "api.gog.com/products/"
 	req, err := http.NewRequest("GET", endpoint+appid, nil)
 	if err != nil {
@@ -29,7 +29,6 @@ func (gog *RepoGog) GetData(appid string) (gogapis.Domain, error){
 	fmt.Println("GOG GetData, step 1") //debug
 	fmt.Println(endpoint+appid) //debug
 
-	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return gogapis.Domain{}, err
@@ -39,10 +38,9 @@ func (gog *RepoGog) GetData(appid string) (gogapis.Domain, error){
 	fmt.Println(resp.Body) //debug
 
 	defer resp.Body.Close()
-	//bodybytes, _ := io.ReadAll(resp.Body)
-	//json.Unmarshal(bodybytes, &gogapi)
+	bodybytes, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal(bodybytes, &gogapi)
 
-	err = json.NewDecoder(resp.Body).Decode(&gogapi)
 	fmt.Println("GOG GetData, step 3") //debug
 	fmt.Println(err, gogapi) //debug
 	if err != nil {

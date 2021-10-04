@@ -26,19 +26,6 @@ func (repo *repoUsers) Store(ctx context.Context, user *users.Domain) error {
 	return nil
 }
 
-// func (repo *repoUsers) Insert(user *users.Domain) (*users.Domain, error) {
-// 	recordUser := FromDomain(*user)
-// 	if err := repo.DBConn.Create(&recordUser).Error; err != nil {
-// 		return &users.Domain{}, err
-// 	}
-
-// 	record, err := repo.FindByID(int(recordUser.ID))
-// 	if err != nil {
-// 		return &users.Domain{}, err
-// 	}
-// 	return record, nil
-// }
-
 func (repo *repoUsers) Update(user *users.Domain, id int) (*users.Domain, error) {
 	recordUser := FromDomain(*user)
 	if err := repo.DBConn.Where("id=?", id).Updates(&recordUser).Error; err != nil {

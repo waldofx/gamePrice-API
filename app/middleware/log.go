@@ -7,7 +7,7 @@ import (
 
 func LogMiddlewareInit(e *echo.Echo) {
 	logger := middleware.LoggerConfig{
-		Format: `[${time_rfc3339}] ${status} ${method} ${host} ${path} ${latency_human}` + "\n\n",
+		Format: `[${time_rfc3339}] ${status} ${method} ${host} ${path} ${latency_human}` + "\n",
 	}
 
 	e.Use(middleware.LoggerWithConfig(logger))

@@ -1,7 +1,6 @@
 package games
 
 import (
-	"fmt"
 	"gameprice-api/business/games"
 
 	"gorm.io/gorm"
@@ -16,7 +15,7 @@ type Games struct {
 }
 
 func ToDomain(rec Games) games.Domain {
-	fmt.Printf("%+v", rec)
+	// fmt.Printf("%+v", rec)
 	return games.Domain{
 		ID:        int(rec.ID),
 		Name:      rec.Name,

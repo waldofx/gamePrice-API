@@ -1,7 +1,6 @@
 package users
 
 import (
-	"fmt"
 	"gameprice-api/business/users"
 
 	"gorm.io/gorm"
@@ -17,7 +16,6 @@ type Users struct {
 }
 
 func ToDomain(rec Users) users.Domain {
-	fmt.Printf("%+v", rec)
 	return users.Domain{
 		ID:        	int(rec.ID),
 		Username: 	rec.Username,

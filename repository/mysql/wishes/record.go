@@ -1,7 +1,6 @@
 package wishes
 
 import (
-	"fmt"
 	"gameprice-api/business/wishes"
 	"gameprice-api/repository/mysql/games"
 	"gameprice-api/repository/mysql/sellers"
@@ -23,7 +22,6 @@ type Wishes struct {
 }
 
 func ToDomain(rec Wishes) wishes.Domain {
-	fmt.Printf("%+v", rec)
 	return wishes.Domain{
 		ID:        	int(rec.ID),
 		UserID: 	rec.UserID,

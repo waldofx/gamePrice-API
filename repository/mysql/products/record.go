@@ -1,7 +1,6 @@
 package products
 
 import (
-	"fmt"
 	"gameprice-api/business/products"
 	"gameprice-api/repository/mysql/games"
 	"gameprice-api/repository/mysql/sellers"
@@ -21,7 +20,6 @@ type Products struct {
 }
 
 func ToDomain(rec Products) products.Domain {
-	fmt.Printf("%+v", rec)
 	return products.Domain{
 		ID:        	int(rec.ID),
 		GameID: 	rec.GameID,

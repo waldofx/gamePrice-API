@@ -19,7 +19,6 @@ type Domain struct {
 type Service interface {
 	CreateToken(ctx context.Context, username, password string) (string, error)
 	Store(ctx context.Context, data *Domain) error
-	// Append(user *Domain) (*Domain, error)
 	FindAll() ([]Domain, error)
 	FindByID(id int) (*Domain, error)
 	Update(user *Domain, id int) (*Domain, error)
@@ -29,7 +28,6 @@ type Service interface {
 // interface of data layer -> fungsi fungsi untuk membaca / memerintah database, 3rd Party, ataupun package lain.
 type Repository interface {
 	Store(ctx context.Context, data *Domain) error
-	// Insert(user *Domain) (*Domain, error)
 	FindAll() ([]Domain, error)
 	FindByID(id int) (*Domain, error)
 	FindByUsername(ctx context.Context, username string) (Domain, error)
