@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
 	_handlerGames "gameprice-api/app/presenter/games"
@@ -22,6 +20,7 @@ import (
 	_servUsers "gameprice-api/business/users"
 	_repoUsers "gameprice-api/repository/mysql/users"
 
+	_repoGOGapis "gameprice-api/repository/thirdparty/gogapis"
 	_repoSteamapis "gameprice-api/repository/thirdparty/steamapis"
 
 	_handlerProducts "gameprice-api/app/presenter/products"
@@ -31,6 +30,8 @@ import (
 	_handlerWishes "gameprice-api/app/presenter/wishes"
 	_servWishes "gameprice-api/business/wishes"
 	_repoWishes "gameprice-api/repository/mysql/wishes"
+
+	_dbDriver "gameprice-api/repository/mysql"
 
 	_middleware "gameprice-api/app/middleware"
 	_routes "gameprice-api/app/routes"
@@ -48,35 +49,26 @@ func init() {
 	}
 }
 
-func InitDB(status string) *gorm.DB {
-	db := "project"
-	if status == "testing" {
-		db = "project-test"
-	}
-	connectionString := fmt.Sprintf("root:@tcp(0.0.0.0:3306)/%s?charset=utf8mb4&parseTime=True&loc=Local", db)
-
-	var err error
-	DB, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
-
-	if err != nil {
-		panic(err)
-	}
-
-	DB.AutoMigrate(
+func dbMigrate(db *gorm.DB) {
+	db.AutoMigrate(
 		&_repoGames.Games{},
 		&_repoSellers.Sellers{},
 		&_repoUsers.Users{},
 		&_repoProducts.Products{},
 		&_repoWishes.Wishes{},
-		// &_repoSteamapis.SteamName{},
-		// &_repoSteamapis.SteamAPI{}, //gagal migrate disini
 	)
-
-	return DB
 }
 
 func main() {
-	db := InitDB("")
+	configDB := _dbDriver.ConfigDB{
+		DB_Username: viper.GetString(`database.user`),
+		DB_Password: viper.GetString(`database.pass`),
+		DB_Host:     viper.GetString(`database.host`),
+		DB_Port:     viper.GetString(`database.port`),
+		DB_Database: viper.GetString(`database.name`),
+	}
+	db := configDB.InitialDB()
+	dbMigrate(db)
 
 	configJWT := _middleware.ConfigJWT{
 		SecretJWT:       viper.GetString(`jwt.secret`),
@@ -99,8 +91,9 @@ func main() {
 	usersService := _servUsers.NewService(usersRepo, &configJWT, timeoutContext)
 	usersHandler := _handlerUsers.NewHandler(usersService)
 	steamapisRepo := _repoSteamapis.NewRepo()
+	gogapisRepo := _repoGOGapis.NewRepo()
 	productsRepo := _repoProducts.NewRepoMySQL(db)
-	productsService := _servProducts.NewService(productsRepo, steamapisRepo)
+	productsService := _servProducts.NewService(productsRepo, steamapisRepo, gogapisRepo)
 	productsHandler := _handlerProducts.NewHandler(productsService)
 	wishesRepo := _repoWishes.NewRepoMySQL(db)
 	wishesService := _servWishes.NewService(wishesRepo)
@@ -119,5 +112,5 @@ func main() {
 
 
 	_middleware.LogMiddlewareInit(e)
-	log.Fatal(e.Start("localhost:8080"))
+	log.Fatal(e.Start(viper.GetString("server.address")))
 }

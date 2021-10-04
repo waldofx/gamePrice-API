@@ -9,9 +9,10 @@ import (
 
 type Games struct {
 	gorm.Model
-	ID        uint `gorm:"primaryKey"`
-	Name      string
-	Category  string
+	ID        	uint `gorm:"primaryKey"`
+	Name      	string
+	SteamID  	string
+	GOGID		string
 }
 
 func ToDomain(rec Games) games.Domain {
@@ -19,7 +20,8 @@ func ToDomain(rec Games) games.Domain {
 	return games.Domain{
 		ID:        int(rec.ID),
 		Name:      rec.Name,
-		Category:  rec.Category,
+		SteamID:   rec.SteamID,
+		GOGID:     rec.GOGID,
 		CreatedAt: rec.CreatedAt,
 		UpdatedAt: rec.UpdatedAt,
 	}
@@ -27,9 +29,10 @@ func ToDomain(rec Games) games.Domain {
 
 func FromDomain(domain games.Domain) Games {
 	return Games{
-		ID: uint(domain.ID),
-		Name:    domain.Name,
-		Category:     domain.Category,
+		ID: 		uint(domain.ID),
+		Name:    	domain.Name,
+		SteamID:    domain.SteamID,
+		GOGID:     	domain.GOGID,
 	}
 }
 

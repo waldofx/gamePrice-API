@@ -6,20 +6,22 @@ import (
 )
 
 type Games struct {
-	ID        int       `json:"id"`
-	Name	  string	`json:"name"`
-	Category  string	`json:"category"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        	int       	`json:"id"`
+	Name	  	string		`json:"name"`
+	SteamID   	string 		`json:"steam_id"`
+	GOGID	  	string		`json:"gog_id"`
+	CreatedAt 	time.Time 	`json:"created_at"`
+	UpdatedAt 	time.Time 	`json:"updated_at"`
 }
 
 func FromDomain(domain games.Domain) Games {
 	return Games{
-		ID:        domain.ID,
-		Name:      domain.Name,
-		Category:  domain.Category,
-		CreatedAt: domain.CreatedAt,
-		UpdatedAt: domain.UpdatedAt,
+		ID:       	domain.ID,
+		Name:     	domain.Name,
+		SteamID:  	domain.SteamID,
+		GOGID: 		domain.GOGID,
+		CreatedAt:	domain.CreatedAt,
+		UpdatedAt:	domain.UpdatedAt,
 	}
 }
 

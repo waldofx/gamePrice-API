@@ -6,7 +6,8 @@ import "time"
 type Domain struct {
 	ID        int
 	Name      string
-	Category  string
+	SteamID	  string
+	GOGID	  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

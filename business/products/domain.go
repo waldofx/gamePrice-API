@@ -10,6 +10,7 @@ type Domain struct {
 	SellerID  int
 	Seller    string
 	Price	  int
+	URL		  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

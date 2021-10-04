@@ -1,17 +1,17 @@
 {
     "debug": true,
     "server": {
-        "address": ":8080"
+        "address": "localhost:8080"
     },
     "context": {
         "timeout": 2
     },
     "database": {
-        "host": "localhost",
+        "host": "0.0.0.0",
         "port": "3306",
         "user": "root",
         "pass": "",
-        "name": "article"
+        "name": "project"
     },
     "jwt": {
         "secret": "supersecret12345!@#$%",
