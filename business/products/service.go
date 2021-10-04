@@ -20,28 +20,18 @@ func NewService(repoProduct Repository, rs steamapis.Repository, rg gogapis.Repo
 	}
 }
 
-func (servProduct *serviceProducts) Append(product *Domain) (*Domain, error) {
-	result, err := servProduct.repository.Insert(product)
-	if err != nil {
-		return &Domain{}, err
-	}
-	fmt.Println(" finish init Insert")
-
+func (servProduct *serviceProducts) APIDetail(product *Domain) (*Domain, error) {
 	if product.SellerID == 1 {
-		steam, err := servProduct.reposteam.GetID(result.Game)
+		steam, err := servProduct.reposteam.GetID(product.Game)
 		if err != nil {
 			return &Domain{}, err
 		}
-		fmt.Println(" finish GetID, result.Game: " + result.Game)
-		fmt.Println(" finish GetID, steam.Name: " + steam.Name)
-	
 		steam2, err := servProduct.reposteam.GetData(steam.AppID)
 		if err != nil {
 			return &Domain{}, err
 		}
-		result.Price = steam2.Price
-		fmt.Println(" finish GetData, steam2.Name: " + steam2.Name)
-		fmt.Println(00000 + steam2.Price)
+		product.Price = steam2.Price
+		product.URL = ("https://store.steampowered.com/app/" + steam.AppID)
 
 	} else if product.SellerID == 2{
 		gog, err := servProduct.repogog.GetData("1447947499")
@@ -49,10 +39,19 @@ func (servProduct *serviceProducts) Append(product *Domain) (*Domain, error) {
 			println("ERROR GetData: ", err)
 			return &Domain{}, err
 		}
-		result.URL = gog.URL
+		product.URL = gog.URL
 		fmt.Println(gog.URL)
 	}
+	return product, nil
+}
 
+func (servProduct *serviceProducts) Append(product *Domain) (*Domain, error) {
+	result, err := servProduct.repository.Insert(product)
+	if err != nil {
+		return &Domain{}, err
+	}
+	servProduct.APIDetail(result)
+	servProduct.Update(result, result.ID)
 	return result, nil
 }
 

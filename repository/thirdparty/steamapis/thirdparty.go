@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	steamapis "gameprice-api/business/steamapis"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -21,46 +23,37 @@ func NewRepo() steamapis.Repository{
 
 //third-party
 func (steam *Steam) GetID(gname string) (steamapis.Domain, error){
+	//var steamname SteamName
 	name := strings.ToLower(gname)
 	endpoint := "https://steamcommunity.com/actions/SearchApps/"
 	req, err := http.NewRequest("GET", endpoint+url.QueryEscape(name), nil)
 	if err != nil {
 		return steamapis.Domain{}, err
 	}
-	fmt.Println(endpoint+url.QueryEscape(name)) //debug
-	fmt.Println(req) //debug
 
 	// client := &http.Client{}
 	resp, err := steam.httpClient.Do(req)
 	if err != nil {
 		return steamapis.Domain{}, err
 	}
-	fmt.Println(resp) //debug
-	fmt.Println(resp.Body) //debug
-	fmt.Println("Above me is resp.body!") //debug
 
 	defer resp.Body.Close()
-	// bodybytes, _ := io.ReadAll(resp.Body)
-	// json.Unmarshal(bodybytes, &steamname)
+	bodybytes, _ := io.ReadAll(resp.Body)
+	var steamname []SteamName
+	_ = json.Unmarshal(bodybytes, &steamname)
 
-	// resp.ParseForm()
-	// resp.Form = resp.ParseForm()
-
-	steamname := SteamName{}
-	err = json.NewDecoder(resp.Body).Decode(&steamname)
-	fmt.Println(err, steamname) //debug
 	if err != nil {
 		return steamapis.Domain{}, err
 	}
 	fmt.Println(" GetID sucess! 1") //debug
-	return steamname.ToDomainID(), nil
+	return steamname[0].ToDomain(), nil
 }
 
 //get data price
 func (steam *Steam) GetData(appid string) (steamapis.Domain, error){
 	//var steamapi SteamAPI
+	client := &http.Client{}
 	endpoint := "https://store.steampowered.com/api/appdetails?"
-	//filters := "filters=basic,price_overview&appids="
 	filters := "filters=price_overview&appids="
 	req, err := http.NewRequest("GET", endpoint+filters+appid, nil)
 	if err != nil {
@@ -68,24 +61,22 @@ func (steam *Steam) GetData(appid string) (steamapis.Domain, error){
 	}
 	fmt.Println(endpoint+filters+appid) //debug
 
-	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return steamapis.Domain{}, err
 	}
-	fmt.Println(resp) //debug
-	fmt.Println(resp.Body) //debug
-	fmt.Println("Finish respponse!") //debug
 
 	defer resp.Body.Close()
-	//bodybytes, _ := io.ReadAll(resp.Body)
-	//json.Unmarshal(bodybytes, &steamapi)
+	bodybytes, _ := ioutil.ReadAll(resp.Body)
+	var steamapi map[string]SteamAPI
+	_ = json.Unmarshal(bodybytes, &steamapi)
 
-	steamapi := SteamAPI{}
-	err = json.NewDecoder(resp.Body).Decode(&steamapi)
+
 	fmt.Println(err, steamapi) //debug
 	if err != nil {
 		return steamapis.Domain{}, err
 	}
-	return steamapi.ToDomain(), nil
+	return steamapis.Domain{
+		Price: steamapi[appid].Data.PriceOverview.Final,
+	}, nil
 }
