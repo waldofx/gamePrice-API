@@ -1,11 +1,11 @@
 package routes
 
 import (
-	"gameprice-api/app/presenter/games"
-	"gameprice-api/app/presenter/products"
-	"gameprice-api/app/presenter/sellers"
-	"gameprice-api/app/presenter/users"
-	"gameprice-api/app/presenter/wishes"
+	"gameprice-api/controllers/games"
+	"gameprice-api/controllers/products"
+	"gameprice-api/controllers/sellers"
+	"gameprice-api/controllers/users"
+	"gameprice-api/controllers/wishes"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -13,11 +13,11 @@ import (
 
 type HandlerList struct {
 	JWTMiddleware  middleware.JWTConfig
-	GameHandler games.Presenter
-	SellerHandler sellers.Presenter
-	UserHandler users.Presenter
-	ProductHandler products.Presenter
-	WishHandler wishes.Presenter
+	GameHandler games.Controller
+	SellerHandler sellers.Controller
+	UserHandler users.Controller
+	ProductHandler products.Controller
+	WishHandler wishes.Controller
 }
 
 func (handler *HandlerList) RouteRegister(e *echo.Echo) {

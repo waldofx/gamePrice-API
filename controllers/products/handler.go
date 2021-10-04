@@ -1,34 +1,34 @@
-package games
+package products
 
 import (
-	"gameprice-api/app/presenter/games/request"
-	"gameprice-api/app/presenter/games/response"
-	"gameprice-api/business/games"
+	"gameprice-api/business/products"
+	"gameprice-api/controllers/products/request"
+	"gameprice-api/controllers/products/response"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
-type Presenter struct {
-	serviceGame games.Service
+type Controller struct {
+	serviceProduct products.Service
 }
 
-func NewHandler(gameServ games.Service) *Presenter {
-	return &Presenter{
-		serviceGame: gameServ,
+func NewHandler(productServ products.Service) *Controller {
+	return &Controller{
+		serviceProduct: productServ,
 	}
 }
 
-func (handler *Presenter) Create(echoContext echo.Context) error {
-	var req request.Games
+func (handler *Controller) Create(echoContext echo.Context) error {
+	var req request.Products
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
 	domain := request.ToDomain(req)
-	resp, err := handler.serviceGame.Append(domain)
+	resp, err := handler.serviceProduct.Append(domain)
 	if err != nil {
 		return echoContext.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Internal Server Error",
@@ -41,7 +41,7 @@ func (handler *Presenter) Create(echoContext echo.Context) error {
 	})
 }
 
-func (handler *Presenter) Update(echoContext echo.Context) error{
+func (handler *Controller) Update(echoContext echo.Context) error{
 	idstr := echoContext.Param("id")
 	id, err := strconv.Atoi(idstr)
 	if err != nil{
@@ -49,14 +49,14 @@ func (handler *Presenter) Update(echoContext echo.Context) error{
 			"message": "Bad Request",
 		})
 	}
-	var req request.Games
+	var req request.Products
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
 	domain := request.ToDomain(req)
-	resp, err := handler.serviceGame.Update(domain, id)
+	resp, err := handler.serviceProduct.Update(domain, id)
 	if err != nil {
 		return echoContext.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Internal Server Error",
@@ -65,19 +65,19 @@ func (handler *Presenter) Update(echoContext echo.Context) error{
 	return echoContext.JSON(http.StatusOK, response.FromDomain(*resp))
 }
 
-func (handler *Presenter) ReadAll(echoContext echo.Context) error{
-	games, err := handler.serviceGame.FindAll()
+func (handler *Controller) ReadAll(echoContext echo.Context) error{
+	products, err := handler.serviceProduct.FindAll()
 	if err != nil {
 		return echoContext.JSON(http.StatusBadRequest,  map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
 	return echoContext.JSON(http.StatusOK, map[string]interface{}{
-		"games": response.NewResponseArray(games),
+		"products": response.NewResponseArray(products),
 	})
 }
 
-func (handler *Presenter) ReadID(echoContext echo.Context) error {
+func (handler *Controller) ReadID(echoContext echo.Context) error {
 	idstr := echoContext.Param("id")
 	id, err := strconv.Atoi(idstr)
 	if err != nil{
@@ -85,7 +85,7 @@ func (handler *Presenter) ReadID(echoContext echo.Context) error {
 			"message": "Bad Request",
 		})
 	}
-	resp, err :=  handler.serviceGame.FindByID(id)
+	resp, err :=  handler.serviceProduct.FindByID(id)
 	if err != nil{
 		return echoContext.JSON(http.StatusNotFound, map[string]interface{}{
 			"message": "Not Found",
@@ -94,7 +94,7 @@ func (handler *Presenter) ReadID(echoContext echo.Context) error {
 	return echoContext.JSON(http.StatusOK, response.FromDomain(*resp))
 }
 
-func(handler *Presenter) Delete(echoContext echo.Context) error{
+func(handler *Controller) Delete(echoContext echo.Context) error{
 	idstr := echoContext.Param("id")
 	id, err := strconv.Atoi(idstr)
 	if err != nil{
@@ -102,8 +102,8 @@ func(handler *Presenter) Delete(echoContext echo.Context) error{
 			"message": "Bad Request",
 		})
 	}
-	game, err1 := handler.serviceGame.FindByID(id)
-	result, err2 :=  handler.serviceGame.Delete(game, id)
+	product, err1 := handler.serviceProduct.FindByID(id)
+	result, err2 :=  handler.serviceProduct.Delete(product, id)
 
 	if err1 != nil{
 		return echoContext.JSON(http.StatusNotFound, map[string]interface{}{

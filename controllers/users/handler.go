@@ -1,27 +1,27 @@
 package users
 
 import (
-	presenter "gameprice-api/app/presenter"
-	"gameprice-api/app/presenter/users/request"
-	"gameprice-api/app/presenter/users/response"
 	"gameprice-api/business/users"
+	controller "gameprice-api/controllers"
+	"gameprice-api/controllers/users/request"
+	"gameprice-api/controllers/users/response"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
-type Presenter struct {
+type Controller struct {
 	serviceUser users.Service
 }
 
-func NewHandler(userServ users.Service) *Presenter {
-	return &Presenter{
+func NewHandler(userServ users.Service) *Controller {
+	return &Controller{
 		serviceUser: userServ,
 	}
 }
 
-func (handler *Presenter) CreateToken(echoContext echo.Context) error {
+func (handler *Controller) CreateToken(echoContext echo.Context) error {
 	ctx := echoContext.Request().Context()
 
 	username := echoContext.QueryParam("username")
@@ -29,33 +29,33 @@ func (handler *Presenter) CreateToken(echoContext echo.Context) error {
 
 	token, err := handler.serviceUser.CreateToken(ctx, username, password)
 	if err != nil {
-		return presenter.NewErrorResponse(echoContext, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(echoContext, http.StatusInternalServerError, err)
 	}
 
 	response := struct {
 		Token string `json:"token"`
 	}{Token: token}
 
-	return presenter.NewSuccessResponse(echoContext, response)
+	return controller.NewSuccessResponse(echoContext, response)
 }
 
-func (handler *Presenter) Store(echoContext echo.Context) error {
+func (handler *Controller) Store(echoContext echo.Context) error {
 	ctx := echoContext.Request().Context()
 
 	req := request.Users{}
 	if err := echoContext.Bind(&req); err != nil {
-		return presenter.NewErrorResponse(echoContext, http.StatusBadRequest, err)
+		return controller.NewErrorResponse(echoContext, http.StatusBadRequest, err)
 	}
 
 	err := handler.serviceUser.Store(ctx, request.ToDomain(req))
 	if err != nil {
-		return presenter.NewErrorResponse(echoContext, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(echoContext, http.StatusInternalServerError, err)
 	}
 
-	return presenter.NewSuccessResponse(echoContext, "Successfully inserted")
+	return controller.NewSuccessResponse(echoContext, "Successfully inserted")
 }
 
-func (handler *Presenter) Update(echoContext echo.Context) error{
+func (handler *Controller) Update(echoContext echo.Context) error{
 	idstr := echoContext.Param("id")
 	id, err := strconv.Atoi(idstr)
 	if err != nil{
@@ -79,7 +79,7 @@ func (handler *Presenter) Update(echoContext echo.Context) error{
 	return echoContext.JSON(http.StatusOK, response.FromDomain(*resp))
 }
 
-func (handler *Presenter) ReadAll(echoContext echo.Context) error{
+func (handler *Controller) ReadAll(echoContext echo.Context) error{
 	users, err := handler.serviceUser.FindAll()
 	if err != nil {
 		return echoContext.JSON(http.StatusBadRequest,  map[string]interface{}{
@@ -91,7 +91,7 @@ func (handler *Presenter) ReadAll(echoContext echo.Context) error{
 	})
 }
 
-func (handler *Presenter) ReadID(echoContext echo.Context) error {
+func (handler *Controller) ReadID(echoContext echo.Context) error {
 	idstr := echoContext.Param("id")
 	id, err := strconv.Atoi(idstr)
 	if err != nil{
@@ -108,7 +108,7 @@ func (handler *Presenter) ReadID(echoContext echo.Context) error {
 	return echoContext.JSON(http.StatusOK, response.FromDomain(*resp))
 }
 
-func(handler *Presenter) Delete(echoContext echo.Context) error{
+func(handler *Controller) Delete(echoContext echo.Context) error{
 	idstr := echoContext.Param("id")
 	id, err := strconv.Atoi(idstr)
 	if err != nil{

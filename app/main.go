@@ -8,27 +8,27 @@ import (
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 
-	_handlerGames "gameprice-api/app/presenter/games"
 	_servGames "gameprice-api/business/games"
+	_handlerGames "gameprice-api/controllers/games"
 	_repoGames "gameprice-api/repository/mysql/games"
 
-	_handlerSellers "gameprice-api/app/presenter/sellers"
 	_servSellers "gameprice-api/business/sellers"
+	_handlerSellers "gameprice-api/controllers/sellers"
 	_repoSellers "gameprice-api/repository/mysql/sellers"
 
-	_handlerUsers "gameprice-api/app/presenter/users"
 	_servUsers "gameprice-api/business/users"
+	_handlerUsers "gameprice-api/controllers/users"
 	_repoUsers "gameprice-api/repository/mysql/users"
 
 	_repoGOGapis "gameprice-api/repository/thirdparty/gogapis"
 	_repoSteamapis "gameprice-api/repository/thirdparty/steamapis"
 
-	_handlerProducts "gameprice-api/app/presenter/products"
 	_servProducts "gameprice-api/business/products"
+	_handlerProducts "gameprice-api/controllers/products"
 	_repoProducts "gameprice-api/repository/mysql/products"
 
-	_handlerWishes "gameprice-api/app/presenter/wishes"
 	_servWishes "gameprice-api/business/wishes"
+	_handlerWishes "gameprice-api/controllers/wishes"
 	_repoWishes "gameprice-api/repository/mysql/wishes"
 
 	_dbDriver "gameprice-api/repository/mysql"
@@ -38,7 +38,7 @@ import (
 )
 
 func init() {
-	viper.SetConfigFile(`app/config/config.json`)
+	viper.SetConfigFile(`config/config.json`)
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(err)

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	controller "gameprice-api/app/presenter"
+	controller "gameprice-api/controllers"
 	"net/http"
 	"time"
 

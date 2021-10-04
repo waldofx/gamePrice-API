@@ -1,34 +1,34 @@
-package wishes
+package sellers
 
 import (
-	"gameprice-api/app/presenter/wishes/request"
-	"gameprice-api/app/presenter/wishes/response"
-	"gameprice-api/business/wishes"
+	"gameprice-api/business/sellers"
+	"gameprice-api/controllers/sellers/request"
+	"gameprice-api/controllers/sellers/response"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
-type Presenter struct {
-	serviceWish wishes.Service
+type Controller struct {
+	serviceSeller sellers.Service
 }
 
-func NewHandler(wisheserv wishes.Service) *Presenter {
-	return &Presenter{
-		serviceWish: wisheserv,
+func NewHandler(sellerServ sellers.Service) *Controller {
+	return &Controller{
+		serviceSeller: sellerServ,
 	}
 }
 
-func (handler *Presenter) Create(echoContext echo.Context) error {
-	var req request.Wishes
+func (handler *Controller) Create(echoContext echo.Context) error {
+	var req request.Sellers
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
 	domain := request.ToDomain(req)
-	resp, err := handler.serviceWish.Append(domain)
+	resp, err := handler.serviceSeller.Append(domain)
 	if err != nil {
 		return echoContext.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Internal Server Error",
@@ -41,7 +41,7 @@ func (handler *Presenter) Create(echoContext echo.Context) error {
 	})
 }
 
-func (handler *Presenter) Update(echoContext echo.Context) error{
+func (handler *Controller) Update(echoContext echo.Context) error{
 	idstr := echoContext.Param("id")
 	id, err := strconv.Atoi(idstr)
 	if err != nil{
@@ -49,14 +49,14 @@ func (handler *Presenter) Update(echoContext echo.Context) error{
 			"message": "Bad Request",
 		})
 	}
-	var req request.Wishes
+	var req request.Sellers
 	if err := echoContext.Bind(&req); err != nil {
 		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
 	domain := request.ToDomain(req)
-	resp, err := handler.serviceWish.Update(domain, id)
+	resp, err := handler.serviceSeller.Update(domain, id)
 	if err != nil {
 		return echoContext.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Internal Server Error",
@@ -65,19 +65,19 @@ func (handler *Presenter) Update(echoContext echo.Context) error{
 	return echoContext.JSON(http.StatusOK, response.FromDomain(*resp))
 }
 
-func (handler *Presenter) ReadAll(echoContext echo.Context) error{
-	wishes, err := handler.serviceWish.FindAll()
+func (handler *Controller) ReadAll(echoContext echo.Context) error{
+	sellers, err := handler.serviceSeller.FindAll()
 	if err != nil {
 		return echoContext.JSON(http.StatusBadRequest,  map[string]interface{}{
 			"message": "Bad Request",
 		})
 	}
 	return echoContext.JSON(http.StatusOK, map[string]interface{}{
-		"wishes": response.NewResponseArray(wishes),
+		"sellers": response.NewResponseArray(sellers),
 	})
 }
 
-func (handler *Presenter) ReadID(echoContext echo.Context) error {
+func (handler *Controller) ReadID(echoContext echo.Context) error {
 	idstr := echoContext.Param("id")
 	id, err := strconv.Atoi(idstr)
 	if err != nil{
@@ -85,7 +85,7 @@ func (handler *Presenter) ReadID(echoContext echo.Context) error {
 			"message": "Bad Request",
 		})
 	}
-	resp, err :=  handler.serviceWish.FindByID(id)
+	resp, err :=  handler.serviceSeller.FindByID(id)
 	if err != nil{
 		return echoContext.JSON(http.StatusNotFound, map[string]interface{}{
 			"message": "Not Found",
@@ -94,7 +94,7 @@ func (handler *Presenter) ReadID(echoContext echo.Context) error {
 	return echoContext.JSON(http.StatusOK, response.FromDomain(*resp))
 }
 
-func(handler *Presenter) Delete(echoContext echo.Context) error{
+func(handler *Controller) Delete(echoContext echo.Context) error{
 	idstr := echoContext.Param("id")
 	id, err := strconv.Atoi(idstr)
 	if err != nil{
@@ -102,8 +102,8 @@ func(handler *Presenter) Delete(echoContext echo.Context) error{
 			"message": "Bad Request",
 		})
 	}
-	wish, err1 := handler.serviceWish.FindByID(id)
-	result, err2 :=  handler.serviceWish.Delete(wish, id)
+	seller, err1 := handler.serviceSeller.FindByID(id)
+	result, err2 :=  handler.serviceSeller.Delete(seller, id)
 
 	if err1 != nil{
 		return echoContext.JSON(http.StatusNotFound, map[string]interface{}{
