@@ -4,7 +4,7 @@ type Domain struct {
 	AppID string
 	Name  string
 	URL   string
-	Price int
+	Price string
 }
 
 type Repository interface {

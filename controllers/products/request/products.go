@@ -5,10 +5,10 @@ import (
 )
 
 type Products struct {
-	ID				int `json:"id"`
-	GameID			int	`json:"game_id"`
-	SellerID		int	`json:"seller_id"`
-	Price 			int	`json:"price"`
+	ID				int 	`json:"id"`
+	GameID			int		`json:"game_id"`
+	SellerID		int		`json:"seller_id"`
+	Price 			string	`json:"price"`
 }
 
 func ToDomain(request Products) *products.Domain {

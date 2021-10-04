@@ -1,7 +1,6 @@
 package products
 
 import (
-	"fmt"
 	"gameprice-api/business/gogapis"
 	"gameprice-api/business/steamapis"
 )
@@ -34,13 +33,8 @@ func (servProduct *serviceProducts) APIDetail(product *Domain) (*Domain, error) 
 		product.URL = ("https://store.steampowered.com/app/" + steam.AppID)
 
 	} else if product.SellerID == 2{
-		gog, err := servProduct.repogog.GetData("1447947499")
-		if err != nil {
-			println("ERROR GetData: ", err)
-			return &Domain{}, err
-		}
-		product.URL = gog.URL
-		fmt.Println(gog.URL)
+		product.Price = "Price is not available from this seller."
+		product.URL = ("https://www.gog.com/game/"+product.Game)
 	}
 	return product, nil
 }

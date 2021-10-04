@@ -70,7 +70,14 @@ func (steam *Steam) GetData(appid string) (steamapis.Domain, error){
 	if err != nil {
 		return steamapis.Domain{}, err
 	}
-	return steamapis.Domain{
-		Price: steamapi[appid].Data.PriceOverview.Final,
-	}, nil
+	if steamapi[appid].Data.PriceOverview.DiscountPercent != 0 {
+		return steamapis.Domain{
+			Price: steamapi[appid].Data.PriceOverview.FinalFormatted,
+			Discount: true,
+		}, nil
+	} else{
+		return steamapis.Domain{
+			Price: steamapi[appid].Data.PriceOverview.FinalFormatted,
+		}, nil
+	}
 }
