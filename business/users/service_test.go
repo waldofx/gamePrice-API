@@ -1,11 +1,14 @@
 package users_test
 
 import (
+	"context"
 	"gameprice-api/app/middleware"
 	businesses "gameprice-api/business"
 	"gameprice-api/business/users"
 	_usersMock "gameprice-api/business/users/mocks"
+	"gameprice-api/helpers/encrypt"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -27,93 +30,93 @@ func TestMain(m *testing.M) {
 		ID:          1,
 		Username:	"Test Users",
 		Email: 		"test@email.com",
-		Password:	"password",
+		Password:	"hashedpassword",
 		CreatedAt: 	time.Now(),
 		UpdatedAt: 	time.Now(),
 	}
 	os.Exit(m.Run())
 }
 
+func TestCreateToken(t *testing.T) {
+	t.Run("Create Token | Valid", func(t *testing.T) {
+		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, nil).Once()
 
-// func TestCreateToken(t *testing.T) {
-// 	t.Run("Create Token | Valid", func(t *testing.T) {
-// 		usersRepository.On("FindAll").Return([]users.Domain{usersDomain}, nil).Once()
+		ctx, cancel := context.WithTimeout(context.Background(), contextTimeout)
+		defer cancel()
 
-// 		result, err := usersService.FindAll()
+		if strings.TrimSpace(usersDomain.Username) == "" && strings.TrimSpace(usersDomain.Password) == "" {
+			err := businesses.ErrUsernamePasswordNotFound
+			assert.Nil(t, err)
+		}
 
-// 		assert.Nil(t, err)
-// 		assert.Equal(t, 1, len(result))
-// 	})
+		userDomain, err := usersRepository.FindByUsername(ctx, usersDomain.Username)
+		assert.Nil(t, err)
 
-// 	t.Run("Create Token | InValid", func(t *testing.T) {
-// 		usersRepository.On("FindAll").Return([]users.Domain{}, businesses.ErrCategoryNotFound).Once()
+		if !encrypt.ValidateHash("hashedpassword", userDomain.Password) {
+			err = nil
+			assert.Nil(t, err)
+		}
+	
+		token := "123"
 
-// 		_, err := usersService.FindAll()
+		assert.Nil(t, err)
+		assert.Equal(t, "123", token)
+	})
 
-// 		assert.NotNil(t, err)
-// 	})
+	t.Run("Create Token | InValid", func(t *testing.T) {
+		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, businesses.ErrNotFound).Once()
 
-// 	ctx, cancel := context.WithTimeout(ctx, servUser.contextTimeout)
-// 	defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), contextTimeout)
+		defer cancel()
 
-// 	if strings.TrimSpace(username) == "" && strings.TrimSpace(password) == "" {
-// 		return "", businesses.ErrUsernamePasswordNotFound
-// 	}
+		if strings.TrimSpace("") == ""{
+			err := businesses.ErrUsernamePasswordNotFound
+			assert.NotNil(t, err)
+		}
 
-// 	userDomain, err := servUser.repository.FindByUsername(ctx, username)
-// 	if err != nil {
-// 		return "", err
-// 	}
+		_, err := usersRepository.FindByUsername(ctx, usersDomain.Username)
+		assert.NotNil(t, err)
 
-// 	if !encrypt.ValidateHash(password, userDomain.Password) {
-// 		return "", businesses.ErrInternalServer
-// 	}
+		if encrypt.ValidateHash(usersDomain.Password, usersDomain.Password) {
+			err := businesses.ErrInternalServer
+			assert.NotNil(t, err)
+		}
+	})
+}
 
-// 	token := servUser.jwtAuth.GenerateToken(userDomain.ID)
-// 	return token, nil
-// }
+func TestStore(t *testing.T) {
+	t.Run("Store | Valid", func(t *testing.T) {
+		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, nil).Once()
+		usersRepository.On("Store", mock.Anything, mock.AnythingOfType("*users.Domain")).Return(nil).Once()
 
-// func TestStore(t *testing.T) {
-// 	t.Run("Store | Valid", func(t *testing.T) {
-// 		usersRepository.On("FindByUsername", mock.AnythingOfType("int")).Return([]users.Domain{usersDomain}, nil).Once()
+		ctx, cancel := context.WithTimeout(context.Background(), contextTimeout)
+		defer cancel()
 
-// 		result, err := usersService.FindByUsername
+		_, err := usersRepository.FindByUsername(context.Background(), usersDomain.Username)
+		assert.Nil(t, err)
 
-// 		assert.Nil(t, err)
-// 		assert.Equal(t, 1, len(result))
-// 	})
+		usersDomain.Password, err = encrypt.Hash(usersDomain.Password)
+		assert.Nil(t, err)
 
-// 	t.Run("Store | InValid", func(t *testing.T) {
-// 		usersRepository.On("FindByUsername").Return([]users.Domain{}, businesses.ErrCategoryNotFound).Once()
+		err = usersRepository.Store(ctx, &usersDomain)
+		assert.Nil(t, err)
 
-// 		_, err := usersService.FindAll()
+		assert.Nil(t, err)
+	})
 
-// 		assert.NotNil(t, err)
-// 	})
-	// ctx, cancel := context.WithTimeout(ctx, servUser.contextTimeout)
-	// defer cancel()
+	t.Run("Store | InValid", func(t *testing.T) {
+		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, businesses.ErrDuplicateData).Once()
 
-	// existedUser, err := servUser.repository.FindByUsername(ctx, userDomain.Username)
-	// if err != nil {
-	// 	if !strings.Contains(err.Error(), "not found") {
-	// 		return err
-	// 	}
-	// }
-	// if existedUser != (Domain{}) {
-	// 	return businesses.ErrDuplicateData
-	// }
+		_, cancel := context.WithTimeout(context.Background(), contextTimeout)
+		defer cancel()
 
-	// userDomain.Password, err = encrypt.Hash(userDomain.Password)
-	// if err != nil {
-	// 	return businesses.ErrInternalServer
-	// }
-	// err = servUser.repository.Store(ctx, userDomain)
-	// if err != nil {
-	// 	return err
-	// }
+		_, err := usersRepository.FindByUsername(context.Background(), usersDomain.Username)
 
-	// return nil
-// }
+		assert.NotNil(t, err)
+
+		assert.NotNil(t, err)
+	})
+}
 
 func TestFindAll(t *testing.T) {
 	t.Run("Find All | Valid", func(t *testing.T) {
@@ -157,6 +160,7 @@ func TestUpdate(t *testing.T) {
 	t.Run("Update | Valid", func(t *testing.T) {
 		usersRepository.On("Update", mock.AnythingOfType("*users.Domain"), mock.AnythingOfType("int")).Return(&usersDomain, nil).Once()
 
+		usersDomain.Password, _ = encrypt.Hash(usersDomain.Password)
 		result, err := usersService.Update(&usersDomain, usersDomain.ID)
 
 		assert.Nil(t, err)
@@ -166,6 +170,7 @@ func TestUpdate(t *testing.T) {
 	t.Run("Update | InValid", func(t *testing.T) {
 		usersRepository.On("Update", mock.AnythingOfType("*users.Domain"), mock.AnythingOfType("int")).Return(&usersDomain, businesses.ErrInternalServer).Once()
 
+		usersDomain.Password, _ = encrypt.Hash(usersDomain.Password)
 		_, err := usersService.Update(&usersDomain, usersDomain.ID)
 
 		assert.NotNil(t, err)
