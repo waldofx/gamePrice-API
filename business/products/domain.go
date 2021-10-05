@@ -32,4 +32,5 @@ type Repository interface {
 	FindByID(id int) (*Domain, error)
 	Update(product *Domain, id int) (*Domain, error)
 	Delete(product *Domain, id int) (string, error)
+	GetProduct(int, int) (int, string, bool, string)
 }

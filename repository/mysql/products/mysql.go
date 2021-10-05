@@ -69,3 +69,13 @@ func (repo *repoProducts) Delete(product *products.Domain, id int) (string, erro
 	}
 	return "Data Deleted.", nil
 }
+
+func (repo *repoProducts) GetProduct(gameid, sellerid int) (int, string, bool, string){
+	var recordProduct Products
+
+	if err := repo.DBConn.Joins("Game").Joins("Seller").Where("products.game_id = ?", gameid).Where("products.seller_id = ?", sellerid).Find(&recordProduct).Error; err != nil {
+		return 0, "Price is not available", false, "URL is not available"
+	}
+	//id, price, discount, url := 
+	return int(recordProduct.ID), recordProduct.Price, recordProduct.Discount, recordProduct.URL
+}

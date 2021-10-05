@@ -96,7 +96,7 @@ func main() {
 	productsService := _servProducts.NewService(productsRepo, steamapisRepo, gogapisRepo)
 	productsHandler := _handlerProducts.NewHandler(productsService)
 	wishesRepo := _repoWishes.NewRepoMySQL(db)
-	wishesService := _servWishes.NewService(wishesRepo)
+	wishesService := _servWishes.NewService(wishesRepo, productsRepo)
 	wishesHandler := _handlerWishes.NewHandler(wishesService)
 
 	// initial of routes

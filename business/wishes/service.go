@@ -1,17 +1,29 @@
 package wishes
 
+import (
+	"gameprice-api/business/products"
+)
+
 type serviceWishes struct {
-	repository Repository
+	repository  Repository
+	repoProduct products.Repository
 }
 
-func NewService(repoProduct Repository) Service {
+func NewService(repoWish Repository, repoProduct products.Repository) Service {
 	return &serviceWishes{
-		repository: repoProduct,
+		repository: repoWish,
+		repoProduct: repoProduct,
 	}
 }
 
-func (servProduct *serviceWishes) Append(wish *Domain) (*Domain, error) {
-	result, err := servProduct.repository.Insert(wish)
+func (servWish *serviceWishes) Append(wish *Domain) (*Domain, error) {
+	wish.ProductID, wish.Price, wish.Discount, wish.URL = servWish.repoProduct.GetProduct(wish.GameID, wish.SellerID)
+	// fmt.Printf("%+v", wish)
+	// fmt.Println("")
+	result, err := servWish.repository.Insert(wish)
+	// fmt.Printf("%+v", result)
+	// fmt.Println("")
+	//result.ProductID, result.Price, result.Discount, result.URL = wish.ProductID, wish.Price, wish.Discount, wish.URL
 	if err != nil {
 		return &Domain{}, err
 	}
@@ -19,32 +31,32 @@ func (servProduct *serviceWishes) Append(wish *Domain) (*Domain, error) {
 	return result, nil
 }
 
-func (servProduct *serviceWishes) FindAll() ([]Domain, error) {
-	result, err := servProduct.repository.FindAll()
+func (servWish *serviceWishes) FindAll() ([]Domain, error) {
+	result, err := servWish.repository.FindAll()
 	if err != nil {
 		return []Domain{}, err
 	}
 	return result, nil
 }
 
-func (servProduct *serviceWishes) FindByID(id int) (*Domain, error) {
-	result, err := servProduct.repository.FindByID(id)
+func (servWish *serviceWishes) FindByID(id int) (*Domain, error) {
+	result, err := servWish.repository.FindByID(id)
 	if err != nil {
 		return &Domain{}, err
 	}
 	return result, nil
 }
 
-func (servProduct *serviceWishes) Update(wish *Domain, id int) (*Domain, error) {
-	result, err := servProduct.repository.Update(wish, id)
+func (servWish *serviceWishes) Update(wish *Domain, id int) (*Domain, error) {
+	result, err := servWish.repository.Update(wish, id)
 	if err != nil {
 		return &Domain{}, err
 	}
 	return result, nil
 }
 
-func (servProduct *serviceWishes) Delete(wish *Domain, id int) (string, error) {
-	result, err := servProduct.repository.Delete(wish, id)
+func (servWish *serviceWishes) Delete(wish *Domain, id int) (string, error) {
+	result, err := servWish.repository.Delete(wish, id)
 	if err != nil {
 		return "Fail to delete.", err
 	}

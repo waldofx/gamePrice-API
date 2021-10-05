@@ -11,9 +11,12 @@ type Domain struct {
 	Username      	string
 	GameID	  		int
 	SellerID		int
-	GameName      	string //products.Domain
+	GameName      	string
 	GameSeller		string
-	Price			int
+	ProductID		int
+	Price			string
+	Discount		bool
+	URL				string
 	CreatedAt 		time.Time
 	UpdatedAt 		time.Time
 }
