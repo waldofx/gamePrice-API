@@ -112,6 +112,25 @@ func TestFindByID(t *testing.T) {
 	})
 }
 
+func TestFindUserByID(t *testing.T) {
+	t.Run("Find By UserID | Valid", func(t *testing.T) {
+		wishesRepository.On("FindByUserID", mock.AnythingOfType("int")).Return([]wishes.Domain{wishesDomain}, nil).Once()
+
+		result, err := wishesService.FindByUserID(wishesDomain.ID)
+
+		assert.Nil(t, err)
+		assert.Equal(t, 1, len(result))
+	})
+
+	t.Run("Find By UserID | InValid", func(t *testing.T) {
+		wishesRepository.On("FindByUserID", mock.AnythingOfType("int")).Return([]wishes.Domain{wishesDomain}, businesses.ErrCategoryNotFound).Once()
+
+		_, err := wishesService.FindByUserID(wishesDomain.ID)
+
+		assert.NotNil(t, err)
+	})
+}
+
 // func TestUpdate(t *testing.T) {
 // 	t.Run("Update | Valid 1", func(t *testing.T) {
 // 		wishesRepository.On("Update", mock.AnythingOfType("*wishes.Domain"), mock.AnythingOfType("int")).Return(&wishesDomain, nil).Maybe().Twice()
