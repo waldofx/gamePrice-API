@@ -87,6 +87,7 @@ func (servUser *serviceUsers) FindByID(id int) (*Domain, error) {
 }
 
 func (servUser *serviceUsers) Update(user *Domain, id int) (*Domain, error) {
+	user.Password, _ = encrypt.Hash(user.Password)
 	result, err := servUser.repository.Update(user, id)
 	if err != nil {
 		return &Domain{}, err

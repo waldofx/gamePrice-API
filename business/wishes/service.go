@@ -43,6 +43,7 @@ func (servWish *serviceWishes) FindByID(id int) (*Domain, error) {
 }
 
 func (servWish *serviceWishes) Update(wish *Domain, id int) (*Domain, error) {
+	wish.ProductID, wish.Price, wish.Discount, wish.URL = servWish.repoProduct.GetProduct(wish.GameID, wish.SellerID)
 	result, err := servWish.repository.Update(wish, id)
 	if err != nil {
 		return &Domain{}, err

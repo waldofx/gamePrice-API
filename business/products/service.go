@@ -1,21 +1,18 @@
 package products
 
 import (
-	"gameprice-api/business/gogapis"
 	"gameprice-api/business/steamapis"
 )
 
 type serviceProducts struct {
 	repository 	Repository
 	reposteam 	steamapis.Repository
-	repogog		gogapis.Repository
 }
 
-func NewService(repoProduct Repository, rs steamapis.Repository, rg gogapis.Repository) Service {
+func NewService(repoProduct Repository, rs steamapis.Repository) Service {
 	return &serviceProducts{
 		repository: repoProduct,
 		reposteam: rs,
-		repogog: rg,
 	}
 }
 
@@ -29,6 +26,7 @@ func (servProduct *serviceProducts) APIDetail(product *Domain) (*Domain, error) 
 		if err != nil {
 			return &Domain{}, err
 		}
+		product.Discount = steam2.Discount
 		product.Price = steam2.Price
 		product.URL = ("https://store.steampowered.com/app/" + steam.AppID)
 
@@ -70,6 +68,8 @@ func (servProduct *serviceProducts) Update(product *Domain, id int) (*Domain, er
 	if err != nil {
 		return &Domain{}, err
 	}
+	result, _ = servProduct.APIDetail(result)
+	servProduct.repository.Update(result, id)
 	return result, nil
 }
 
