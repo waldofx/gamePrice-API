@@ -4,6 +4,7 @@ import (
 	businesses "gameprice-api/business"
 	"gameprice-api/business/games"
 	_gamesMock "gameprice-api/business/games/mocks"
+	"os"
 	"testing"
 	"time"
 
@@ -14,7 +15,7 @@ import (
 var (
 	gamesRepository _gamesMock.Repository
 	gamesService	games.Service
-	gamesDomain games.Domain
+	gamesDomain 	games.Domain
 )
 
 func TestMain(m *testing.M) {
@@ -27,20 +28,21 @@ func TestMain(m *testing.M) {
 		CreatedAt: 	time.Now(),
 		UpdatedAt: 	time.Now(),
 	}
+	os.Exit(m.Run())
 }
 
 func TestAppend(t *testing.T){
 	t.Run("Append | Valid", func(t *testing.T) {
-		gamesRepository.On("Insert", mock.AnythingOfType("games.Domain")).Return(gamesDomain, nil).Once()
+		gamesRepository.On("Insert", mock.AnythingOfType("*games.Domain")).Return(&gamesDomain, nil).Once()
 
 		result, err := gamesService.Append(&gamesDomain)
 
 		assert.Nil(t, err)
-		assert.Equal(t, gamesDomain, result)
+		assert.Equal(t, &gamesDomain, result)
 	})
 
 	t.Run("Append | InValid", func(t *testing.T) {
-		gamesRepository.On("Insert", mock.AnythingOfType("games.Domain")).Return(gamesDomain, businesses.ErrInternalServer).Once()
+		gamesRepository.On("Insert", mock.AnythingOfType("*games.Domain")).Return(&gamesDomain, businesses.ErrInternalServer).Once()
 
 		_, err := gamesService.Append(&gamesDomain)
 
@@ -59,7 +61,7 @@ func TestFindAll(t *testing.T) {
 	})
 
 	t.Run("Find All | InValid", func(t *testing.T) {
-		gamesRepository.On("Find").Return([]games.Domain{}, businesses.ErrCategoryNotFound).Once()
+		gamesRepository.On("FindAll").Return([]games.Domain{}, businesses.ErrCategoryNotFound).Once()
 
 		_, err := gamesService.FindAll()
 
@@ -69,16 +71,16 @@ func TestFindAll(t *testing.T) {
 
 func TestFindByID(t *testing.T) {
 	t.Run("Find By ID | Valid", func(t *testing.T) {
-		gamesRepository.On("FindByID", mock.AnythingOfType("games.Domain")).Return(gamesDomain, nil).Once()
+		gamesRepository.On("FindByID", mock.AnythingOfType("int")).Return(&gamesDomain, nil).Once()
 
 		result, err := gamesService.FindByID(gamesDomain.ID)
 
 		assert.Nil(t, err)
-		assert.Equal(t, gamesDomain, result)
+		assert.Equal(t, &gamesDomain, result)
 	})
 
 	t.Run("Find By ID | InValid", func(t *testing.T) {
-		gamesRepository.On("FindByID", mock.AnythingOfType("games.Domain")).Return(gamesDomain, businesses.ErrCategoryNotFound).Once()
+		gamesRepository.On("FindByID", mock.AnythingOfType("int")).Return(&gamesDomain, businesses.ErrCategoryNotFound).Once()
 
 		_, err := gamesService.FindByID(gamesDomain.ID)
 
@@ -88,16 +90,16 @@ func TestFindByID(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	t.Run("Update | Valid", func(t *testing.T) {
-		gamesRepository.On("Update", mock.AnythingOfType("games.Domain"), mock.AnythingOfType("int")).Return(gamesDomain, nil).Once()
+		gamesRepository.On("Update", mock.AnythingOfType("*games.Domain"), mock.AnythingOfType("int")).Return(&gamesDomain, nil).Once()
 
 		result, err := gamesService.Update(&gamesDomain, gamesDomain.ID)
 
 		assert.Nil(t, err)
-		assert.Equal(t, gamesDomain, result)
+		assert.Equal(t, &gamesDomain, result)
 	})
 
 	t.Run("Update | InValid", func(t *testing.T) {
-		gamesRepository.On("Update", mock.AnythingOfType("games.Domain"), mock.AnythingOfType("int")).Return(gamesDomain, businesses.ErrInternalServer).Once()
+		gamesRepository.On("Update", mock.AnythingOfType("*games.Domain"), mock.AnythingOfType("int")).Return(&gamesDomain, businesses.ErrInternalServer).Once()
 
 		_, err := gamesService.Update(&gamesDomain, gamesDomain.ID)
 
@@ -107,7 +109,7 @@ func TestUpdate(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	t.Run("Delete | Valid", func(t *testing.T) {
-		gamesRepository.On("Delete", mock.AnythingOfType("games.Domain"), mock.AnythingOfType("int")).Return(mock.AnythingOfType("string"), nil).Once()
+		gamesRepository.On("Delete", mock.AnythingOfType("*games.Domain"), mock.AnythingOfType("int")).Return("Data Deleted.", nil).Once()
 
 		result, err := gamesService.Delete(&gamesDomain, gamesDomain.ID)
 
@@ -116,7 +118,7 @@ func TestDelete(t *testing.T) {
 	})
 
 	t.Run("Delete | InValid", func(t *testing.T) {
-		gamesRepository.On("Detele", mock.AnythingOfType("games.Domain"), mock.AnythingOfType("int")).Return(mock.AnythingOfType("string"), businesses.ErrInternalServer).Once()
+		gamesRepository.On("Delete", mock.AnythingOfType("*games.Domain"), mock.AnythingOfType("int")).Return("Fail to delete.", businesses.ErrInternalServer).Once()
 
 		_, err := gamesService.Delete(&gamesDomain, gamesDomain.ID)
 
