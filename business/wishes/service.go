@@ -18,12 +18,7 @@ func NewService(repoWish Repository, repoProduct products.Repository) Service {
 
 func (servWish *serviceWishes) Append(wish *Domain) (*Domain, error) {
 	wish.ProductID, wish.Price, wish.Discount, wish.URL = servWish.repoProduct.GetProduct(wish.GameID, wish.SellerID)
-	// fmt.Printf("%+v", wish)
-	// fmt.Println("")
 	result, err := servWish.repository.Insert(wish)
-	// fmt.Printf("%+v", result)
-	// fmt.Println("")
-	//result.ProductID, result.Price, result.Discount, result.URL = wish.ProductID, wish.Price, wish.Discount, wish.URL
 	if err != nil {
 		return &Domain{}, err
 	}
