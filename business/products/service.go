@@ -68,7 +68,10 @@ func (servProduct *serviceProducts) Update(product *Domain, id int) (*Domain, er
 	if err != nil {
 		return &Domain{}, err
 	}
-	result, _ = servProduct.APIDetail(result)
+	result, err = servProduct.APIDetail(result)
+	if err != nil {
+		return &Domain{}, err
+	}
 	servProduct.repository.Update(result, id)
 	return result, nil
 }

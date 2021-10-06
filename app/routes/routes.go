@@ -51,9 +51,10 @@ func (handler *HandlerList) RouteRegister(e *echo.Echo) {
 	products.DELETE("/:id", handler.ProductHandler.Delete)
 
 	wishes := e.Group("wishes")
-	wishes.POST("/insert", handler.WishHandler.Create)
+	wishes.POST("/insert", handler.WishHandler.Create, middleware.JWTWithConfig(handler.JWTMiddleware))
 	wishes.GET("/all", handler.WishHandler.ReadAll, middleware.JWTWithConfig(handler.JWTMiddleware))
-	wishes.GET("/:id", handler.WishHandler.ReadID)
-	wishes.PUT("/:id", handler.WishHandler.Update)
-	wishes.DELETE("/:id", handler.WishHandler.Delete)
+	wishes.GET("/user/:id", handler.WishHandler.ReadUserID, middleware.JWTWithConfig(handler.JWTMiddleware))
+	wishes.GET("/:id", handler.WishHandler.ReadID, middleware.JWTWithConfig(handler.JWTMiddleware))
+	wishes.PUT("/:id", handler.WishHandler.Update, middleware.JWTWithConfig(handler.JWTMiddleware))
+	wishes.DELETE("/:id", handler.WishHandler.Delete, middleware.JWTWithConfig(handler.JWTMiddleware))
 }

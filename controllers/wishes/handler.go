@@ -94,6 +94,25 @@ func (handler *Controller) ReadID(echoContext echo.Context) error {
 	return echoContext.JSON(http.StatusOK, response.FromDomain(*resp))
 }
 
+func (handler *Controller) ReadUserID(echoContext echo.Context) error {
+	idstr := echoContext.Param("id")
+	id, err := strconv.Atoi(idstr)
+	if err != nil{
+		return echoContext.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Bad Request",
+		})
+	}
+	resp, err :=  handler.serviceWish.FindByUserID(id)
+	if err != nil{
+		return echoContext.JSON(http.StatusNotFound, map[string]interface{}{
+			"message": "Not Found",
+		})
+	}
+	return echoContext.JSON(http.StatusOK, map[string]interface{}{
+		"wishes": response.NewResponseArray(resp),
+	})
+}
+
 func(handler *Controller) Delete(echoContext echo.Context) error{
 	idstr := echoContext.Param("id")
 	id, err := strconv.Atoi(idstr)

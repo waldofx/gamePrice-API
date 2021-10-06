@@ -18,6 +18,7 @@ type Domain struct {
 
 // inteface of bussiness layer -> fungsi fungsi yang di butuhkan oleh domain (bussiness logic)
 type Service interface {
+	APIDetail(product *Domain) (*Domain, error)
 	Append(product *Domain) (*Domain, error)
 	FindAll() ([]Domain, error)
 	FindByID(id int) (*Domain, error)

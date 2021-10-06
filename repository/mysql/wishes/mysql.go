@@ -52,6 +52,15 @@ func (repo *repoWishes) FindByID(id int) (*wishes.Domain, error) {
 	return &result, nil
 }
 
+func (repo *repoWishes) FindByUserID(id int) ([]wishes.Domain, error) {
+	var recordWish []Wishes
+	if err := repo.DBConn.Where("wishes.user_id = ?", id).Joins("User").Joins("Game").Joins("Seller").Find(&recordWish).Error; err != nil {
+		return []wishes.Domain{}, err
+	}
+	return ToDomainArray(recordWish), nil
+}
+
+
 func (repo *repoWishes) FindAll() ([]wishes.Domain, error) {
 	var recordWish []Wishes
 	if err := repo.DBConn.Joins("User").Joins("Game").Joins("Seller").Find(&recordWish).Error; err != nil{

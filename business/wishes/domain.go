@@ -26,6 +26,7 @@ type Service interface {
 	Append(wish *Domain) (*Domain, error)
 	FindAll() ([]Domain, error)
 	FindByID(id int) (*Domain, error)
+	FindByUserID(id int) ([]Domain, error)
 	Update(wish *Domain, id int) (*Domain, error)
 	Delete(wish *Domain, id int) (string, error)
 }
@@ -35,6 +36,7 @@ type Repository interface {
 	Insert(wish *Domain) (*Domain, error)
 	FindAll() ([]Domain, error)
 	FindByID(id int) (*Domain, error)
+	FindByUserID(id int) ([]Domain, error)
 	Update(wish *Domain, id int) (*Domain, error)
 	Delete(wish *Domain, id int) (string, error)
 }
