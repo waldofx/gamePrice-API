@@ -50,35 +50,37 @@ func TestAPIDetail(t *testing.T){
 		steamapisRepository.On("GetID", mock.AnythingOfType("string")).Return(steamapisDomain, nil).Once()
 		steamapisRepository.On("GetData", mock.AnythingOfType("string")).Return(steamapisDomain, nil).Once()
 
-		steam, err := steamapisRepository.GetID(productsDomain.Game)
+		result, err := productsService.APIDetail(&productsDomain)
 
 		assert.Nil(t, err)
+		assert.Equal(t, &steamapisDomain.Price, &result.Price)
+		assert.Equal(t, &steamapisDomain.Discount, &result.Discount)
+		assert.Equal(t, "https://store.steampowered.com/app/1", result.URL)
+	})
+	t.Run("API Detail | Case 2 Valid", func(t *testing.T)  {
+		steamapisRepository.On("GetID", mock.AnythingOfType("string")).Return(steamapisDomain, nil).Once()
+		steamapisRepository.On("GetData", mock.AnythingOfType("string")).Return(steamapisDomain, nil).Once()
 
-		steam2, err := steamapisRepository.GetData(steam.AppID)
-
-		assert.Nil(t, err)
-		assert.Equal(t, &steamapisDomain.AppID, &steam2.AppID)
-		assert.Equal(t, &steamapisDomain.Price, &steam2.Price)
-		assert.Equal(t, &steamapisDomain.Discount, &steam2.Discount)
-
-		if productsDomain.SellerID == 2{
-			productsDomain.Price = "Price is not available from this seller."
-			productsDomain.URL = "https://www.gog.com/game/game"
-			assert.Equal(t, "Price is not available from this seller.", productsDomain.Price)
-			assert.Equal(t, "https://www.gog.com/game/game", productsDomain.URL)
+		productsDomain2 := products.Domain{
+			SellerID:  	2,
 		}
+
+		result, err := productsService.APIDetail(&productsDomain2)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "Price is not available from this seller.", result.Price)
+		assert.Equal(t, "https://www.gog.com/game/", result.URL)
 	})
 	t.Run("API Detail | Case 1 inValid", func(t *testing.T)  {
 		steamapisRepository.On("GetID", mock.AnythingOfType("string")).Return(steamapisDomain, businesses.ErrInternalServer).Once()
+		steamapisRepository.On("GetData", mock.AnythingOfType("string")).Return(steamapisDomain, businesses.ErrInternalServer).Once()
 
-		_, err := steamapisRepository.GetID(productsDomain.Game)
+		_, err := productsService.APIDetail(&products.Domain{
+			GameID: 20,
+			Game: "aaaaaaaaaaaaaaa",
+		})
 	
-		assert.NotNil(t, err)
-	})
-
-	t.Run("API Detail | Case 2 InValid", func(t *testing.T)  {
-		steam := &productsDomain
-		assert.NotNil(t, &productsDomain, steam)
+		assert.Nil(t, err)
 	})
 }
 
@@ -146,25 +148,30 @@ func TestUpdate(t *testing.T) {
 	t.Run("Update | Valid 1", func(t *testing.T) {
 		productsRepository.On("Update", mock.AnythingOfType("*products.Domain"), mock.AnythingOfType("int")).Return(&productsDomain, nil).Maybe().Twice()
 		steamapisRepository.On("GetID", mock.AnythingOfType("string")).Return(steamapisDomain, nil).Maybe().Twice()
-		steamapisRepository.On("GetData", mock.AnythingOfType("string")).Return(steamapisDomain, nil).Maybe().Twice().Twice()
+		steamapisRepository.On("GetData", mock.AnythingOfType("string")).Return(steamapisDomain, nil).Maybe().Twice()
 		
-		result, err := productsService.Update(&productsDomain, productsDomain.ID)
+		result, err := productsService.Update(&productsDomain, 1)
 
 		assert.Nil(t, err)
-		assert.Equal(t, &productsDomain, result)
+		assert.Equal(t, &products.Domain{ID:0, GameID:0, Game:"", SellerID:0, Seller:"", Price:"", Discount:false, URL:"", CreatedAt:time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC), UpdatedAt:time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC)}, result)
 	})
 
 	t.Run("Update | InValid", func(t *testing.T) {
 		productsRepository.On("Update", mock.AnythingOfType("*products.Domain"), mock.AnythingOfType("int")).Return(nil, businesses.ErrNotFound).Twice()
 		steamapisRepository.On("GetID", mock.AnythingOfType("string")).Return(nil, businesses.ErrNotFound).Maybe().Twice()
 		steamapisRepository.On("GetData", mock.AnythingOfType("string")).Return(nil, businesses.ErrNotFound).Maybe().Twice()
-		//productsRepository.On("Update", mock.AnythingOfType("*products.Domain"), mock.AnythingOfType("int")).Return(nil, businesses.ErrInternalServer).Twice()
 
 		_, err := productsService.Update(&productsDomain, productsDomain.ID)
 		assert.NotNil(t, err)
+	})
 
-		// _, err = productsService.APIDetail(&productsDomain)
-		// assert.NotNil(t, err)
+	t.Run("Update | InValid 2", func(t *testing.T) {
+		productsRepository.On("Update", mock.AnythingOfType("*products.Domain"), mock.AnythingOfType("int")).Return(nil, businesses.ErrNotFound).Twice()
+		steamapisRepository.On("GetID", mock.AnythingOfType("string")).Return(nil, businesses.ErrNotFound).Maybe().Twice()
+		steamapisRepository.On("GetData", mock.AnythingOfType("string")).Return(nil, businesses.ErrNotFound).Maybe().Twice()
+
+		_, err := productsService.Update(&productsDomain, productsDomain.ID)
+		assert.NotNil(t, err)
 	})
 }
 

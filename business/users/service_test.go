@@ -8,7 +8,6 @@ import (
 	_usersMock "gameprice-api/business/users/mocks"
 	"gameprice-api/helpers/encrypt"
 	"os"
-	"strings"
 	"testing"
 	"time"
 
@@ -41,46 +40,25 @@ func TestCreateToken(t *testing.T) {
 	t.Run("Create Token | Valid", func(t *testing.T) {
 		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, nil).Once()
 
-		ctx, cancel := context.WithTimeout(context.Background(), contextTimeout)
-		defer cancel()
-
-		if strings.TrimSpace(usersDomain.Username) == "" && strings.TrimSpace(usersDomain.Password) == "" {
-			err := businesses.ErrUsernamePasswordNotFound
-			assert.Nil(t, err)
-		}
-
-		userDomain, err := usersRepository.FindByUsername(ctx, usersDomain.Username)
-		assert.Nil(t, err)
-
-		if !encrypt.ValidateHash("hashedpassword", userDomain.Password) {
-			err = nil
-			assert.Nil(t, err)
-		}
-	
-		token := "123"
+		result, err := usersService.CreateToken(context.Background(), usersDomain.Username, usersDomain.Password)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "123", token)
+		assert.Equal(t, "", result)
 	})
 
 	t.Run("Create Token | InValid", func(t *testing.T) {
 		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, businesses.ErrNotFound).Once()
 
-		ctx, cancel := context.WithTimeout(context.Background(), contextTimeout)
-		defer cancel()
+		_, err := usersService.CreateToken(context.Background(), usersDomain.Username, usersDomain.Password)
 
-		if strings.TrimSpace("") == ""{
-			err := businesses.ErrUsernamePasswordNotFound
-			assert.NotNil(t, err)
-		}
-
-		_, err := usersRepository.FindByUsername(ctx, usersDomain.Username)
 		assert.NotNil(t, err)
+	})
+	t.Run("Create Token | InValid 2", func(t *testing.T) {
+		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, businesses.ErrUsernamePasswordNotFound).Once()
 
-		if encrypt.ValidateHash(usersDomain.Password, usersDomain.Password) {
-			err := businesses.ErrInternalServer
-			assert.NotNil(t, err)
-		}
+		_, err := usersService.CreateToken(context.Background(),"", "")
+
+		assert.NotNil(t, err)
 	})
 }
 
@@ -89,31 +67,25 @@ func TestStore(t *testing.T) {
 		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, nil).Once()
 		usersRepository.On("Store", mock.Anything, mock.AnythingOfType("*users.Domain")).Return(nil).Once()
 
-		ctx, cancel := context.WithTimeout(context.Background(), contextTimeout)
-		defer cancel()
+		usersDomain2 := users.Domain{
+			ID: 		2,
+			Username:	"JOKO",
+			Email: 		"test2@email.com",
+			Password:	"hashedpassword2",
+			CreatedAt: 	time.Now(),
+			UpdatedAt: 	time.Now(),
+		}
 
-		_, err := usersRepository.FindByUsername(context.Background(), usersDomain.Username)
+		err := usersService.Store(context.Background(), &usersDomain2)
 		assert.Nil(t, err)
 
-		usersDomain.Password, err = encrypt.Hash(usersDomain.Password)
-		assert.Nil(t, err)
-
-		err = usersRepository.Store(ctx, &usersDomain)
-		assert.Nil(t, err)
-
-		assert.Nil(t, err)
 	})
 
 	t.Run("Store | InValid", func(t *testing.T) {
 		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, businesses.ErrDuplicateData).Once()
+		usersRepository.On("Store", mock.Anything, mock.AnythingOfType("*users.Domain")).Return(businesses.ErrDuplicateData).Once()
 
-		_, cancel := context.WithTimeout(context.Background(), contextTimeout)
-		defer cancel()
-
-		_, err := usersRepository.FindByUsername(context.Background(), usersDomain.Username)
-
-		assert.NotNil(t, err)
-
+		err := usersService.Store(context.Background(), &usersDomain)
 		assert.NotNil(t, err)
 	})
 }

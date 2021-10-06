@@ -52,27 +52,26 @@ func TestMain(m *testing.M) {
 	}
 	os.Exit(m.Run())
 }
-// func TestAppend(t *testing.T){
-// 	t.Run("Append | Valid", func(t *testing.T) {
-// 		wishesRepository.On("Insert", mock.AnythingOfType("*wishes.Domain")).Return(&wishesDomain, nil).Once()
-// 		productsRepository.On("GetID", mock.AnythingOfType("string")).Return(productsDomain, nil).Maybe().Twice()
-// 		productsRepository.On("GetData", mock.AnythingOfType("string")).Return(productsDomain, nil).Maybe().Twice().Twice()
-// 		wishesRepository.On("Update", mock.AnythingOfType("*wishes.Domain"), mock.AnythingOfType("int")).Return(&wishesDomain, nil).Maybe().Twice()
+func TestAppend(t *testing.T){
+	t.Run("Append | Valid", func(t *testing.T) {
+		productsRepository.On("GetProduct", mock.AnythingOfType("int"), mock.AnythingOfType("int")).Return(1, "1", false, "1").Once()
+		wishesRepository.On("Insert", mock.AnythingOfType("*wishes.Domain")).Return(&wishesDomain, nil).Once()
 
-// 		result, err := wishesService.Append(&wishesDomain)
+		result, err := wishesService.Append(&wishesDomain)
 
-// 		assert.Nil(t, err)
-// 		assert.Equal(t, &wishesDomain, result)
-// 	})
+		assert.Nil(t, err)
+		assert.Equal(t, &wishesDomain, result)
+	})
 
-// 	t.Run("Append | InValid", func(t *testing.T) {
-// 		wishesRepository.On("Insert", mock.AnythingOfType("*wishes.Domain")).Return(&wishesDomain, businesses.ErrInternalServer).Once()
+	t.Run("Append | InValid", func(t *testing.T) {
+		productsRepository.On("GetProduct", mock.AnythingOfType("int"), mock.AnythingOfType("int")).Return(1, "1", false, "1").Once()
+		wishesRepository.On("Insert", mock.AnythingOfType("*wishes.Domain")).Return(&wishesDomain, businesses.ErrInternalServer).Once()
 
-// 		_, err := wishesService.Append(&wishesDomain)
+		_, err := wishesService.Append(&wishesDomain)
 
-// 		assert.NotNil(t, err)
-// 	})
-// }
+		assert.NotNil(t, err)
+	})
+}
 
 func TestFindAll(t *testing.T) {
 	t.Run("Find All | Valid", func(t *testing.T) {
@@ -131,31 +130,25 @@ func TestFindUserByID(t *testing.T) {
 	})
 }
 
-// func TestUpdate(t *testing.T) {
-// 	t.Run("Update | Valid 1", func(t *testing.T) {
-// 		wishesRepository.On("Update", mock.AnythingOfType("*wishes.Domain"), mock.AnythingOfType("int")).Return(&wishesDomain, nil).Maybe().Twice()
-// 		productsRepository.On("GetID", mock.AnythingOfType("string")).Return(productsDomain, nil).Maybe().Twice()
-// 		productsRepository.On("GetData", mock.AnythingOfType("string")).Return(productsDomain, nil).Maybe().Twice().Twice()
+func TestUpdate(t *testing.T) {
+	t.Run("Update | Valid 1", func(t *testing.T) {
+		productsRepository.On("GetProduct", mock.AnythingOfType("int"), mock.AnythingOfType("int")).Return(1, "1", false, "1").Once()
+		wishesRepository.On("Update", mock.AnythingOfType("*wishes.Domain"), mock.AnythingOfType("int")).Return(&wishesDomain, nil).Maybe().Twice()
 		
-// 		result, err := wishesService.Update(&wishesDomain, wishesDomain.ID)
+		result, err := wishesService.Update(&wishesDomain, wishesDomain.ID)
+		
+		assert.Nil(t, err)
+		assert.Equal(t, &wishesDomain, result)
+	})
 
-// 		assert.Nil(t, err)
-// 		assert.Equal(t, &wishesDomain, result)
-// 	})
+	t.Run("Update | InValid", func(t *testing.T) {
+		productsRepository.On("GetProduct", mock.AnythingOfType("int"), mock.AnythingOfType("int")).Return(1, "1", false, "1").Once()
+		wishesRepository.On("Update", mock.AnythingOfType("*wishes.Domain"), mock.AnythingOfType("int")).Return(&wishesDomain, businesses.ErrInternalServer).Twice()
 
-// 	t.Run("Update | InValid", func(t *testing.T) {
-// 		wishesRepository.On("Update", mock.AnythingOfType("*wishes.Domain"), mock.AnythingOfType("int")).Return(nil, businesses.ErrNotFound).Twice()
-// 		productsRepository.On("GetID", mock.AnythingOfType("string")).Return(nil, businesses.ErrNotFound).Maybe().Twice()
-// 		productsRepository.On("GetData", mock.AnythingOfType("string")).Return(nil, businesses.ErrNotFound).Maybe().Twice()
-// 		//wishesRepository.On("Update", mock.AnythingOfType("*wishes.Domain"), mock.AnythingOfType("int")).Return(nil, businesses.ErrInternalServer).Twice()
-
-// 		_, err := wishesService.Update(&wishesDomain, wishesDomain.ID)
-// 		assert.NotNil(t, err)
-
-// 		// _, err = wishesService.APIDetail(&wishesDomain)
-// 		// assert.NotNil(t, err)
-// 	})
-// }
+		_, err := wishesService.Update(&wishesDomain, wishesDomain.ID)
+		assert.NotNil(t, err)
+	})
+}
 
 func TestDelete(t *testing.T) {
 	t.Run("Delete | Valid", func(t *testing.T) {
