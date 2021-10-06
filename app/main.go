@@ -37,7 +37,7 @@ import (
 )
 
 func init() {
-	viper.SetConfigFile(`app/config/config.json`)
+	viper.SetConfigFile(`config/config.json`)
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(err)
@@ -58,17 +58,6 @@ func dbMigrate(db *gorm.DB) {
 	)
 }
 
-
-// @title GamePrice-API
-// @version 1.0
-// @description This is a test
-// @termsOfService http://swagger.io/terms/
-// @contact.name API Support
-// @contact.email hacktiv@swagger.io
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @host localhost:8080
-// @BasePath /
 func main() {
 	configDB := _dbDriver.ConfigDB{
 		DB_Username: viper.GetString(`database.user`),
