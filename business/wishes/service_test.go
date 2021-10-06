@@ -133,7 +133,7 @@ func TestFindUserByID(t *testing.T) {
 func TestUpdate(t *testing.T) {
 	t.Run("Update | Valid 1", func(t *testing.T) {
 		productsRepository.On("GetProduct", mock.AnythingOfType("int"), mock.AnythingOfType("int")).Return(1, "1", false, "1").Once()
-		wishesRepository.On("Update", mock.AnythingOfType("*wishes.Domain"), mock.AnythingOfType("int")).Return(&wishesDomain, nil).Maybe().Twice()
+		wishesRepository.On("Update", mock.AnythingOfType("*wishes.Domain"), mock.AnythingOfType("int")).Return(&wishesDomain, nil).Once()
 		
 		result, err := wishesService.Update(&wishesDomain, wishesDomain.ID)
 		
@@ -143,7 +143,7 @@ func TestUpdate(t *testing.T) {
 
 	t.Run("Update | InValid", func(t *testing.T) {
 		productsRepository.On("GetProduct", mock.AnythingOfType("int"), mock.AnythingOfType("int")).Return(1, "1", false, "1").Once()
-		wishesRepository.On("Update", mock.AnythingOfType("*wishes.Domain"), mock.AnythingOfType("int")).Return(&wishesDomain, businesses.ErrInternalServer).Twice()
+		wishesRepository.On("Update", mock.AnythingOfType("*wishes.Domain"), mock.AnythingOfType("int")).Return(&wishesDomain, businesses.ErrInternalServer).Once()
 
 		_, err := wishesService.Update(&wishesDomain, wishesDomain.ID)
 		assert.NotNil(t, err)

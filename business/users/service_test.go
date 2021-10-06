@@ -37,34 +37,34 @@ func TestMain(m *testing.M) {
 }
 
 func TestCreateToken(t *testing.T) {
-	t.Run("Create Token | Valid", func(t *testing.T) {
+	t.Run("Create Token | InValid 1", func(t *testing.T) {
 		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, nil).Once()
 
-		result, err := usersService.CreateToken(context.Background(), usersDomain.Username, usersDomain.Password)
+		password2, _ := encrypt.Hash(usersDomain.Password)
+		_, err := usersService.CreateToken(context.Background(), usersDomain.Username, password2)
 
-		assert.Nil(t, err)
-		assert.Equal(t, "", result)
+		assert.NotNil(t, err)
 	})
 
-	t.Run("Create Token | InValid", func(t *testing.T) {
+	t.Run("Create Token | InValid 2", func(t *testing.T) {
 		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, businesses.ErrNotFound).Once()
 
 		_, err := usersService.CreateToken(context.Background(), usersDomain.Username, usersDomain.Password)
 
 		assert.NotNil(t, err)
 	})
-	t.Run("Create Token | InValid 2", func(t *testing.T) {
-		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, businesses.ErrUsernamePasswordNotFound).Once()
+	// t.Run("Create Token | InValid 3", func(t *testing.T) {
+	// 	//usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, nil).Once()
 
-		_, err := usersService.CreateToken(context.Background(),"", "")
+	// 	_, err := usersService.CreateToken(context.Background(),"", "")
 
-		assert.NotNil(t, err)
-	})
+	// 	assert.NotNil(t, err)
+	// })
 }
 
 func TestStore(t *testing.T) {
 	t.Run("Store | Valid", func(t *testing.T) {
-		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, nil).Once()
+		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(users.Domain{}, nil).Once()
 		usersRepository.On("Store", mock.Anything, mock.AnythingOfType("*users.Domain")).Return(nil).Once()
 
 		usersDomain2 := users.Domain{
@@ -80,6 +80,14 @@ func TestStore(t *testing.T) {
 		assert.Nil(t, err)
 
 	})
+	// t.Run("Store | Valid", func(t *testing.T) {
+	// 	usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, nil).Once()
+	// 	usersRepository.On("Store", mock.Anything, mock.AnythingOfType("*users.Domain")).Return(nil).Once()
+
+	// 	err := usersService.Store(context.Background(), &usersDomain)
+	// 	assert.NotNil(t, err)
+
+	// })
 
 	t.Run("Store | InValid", func(t *testing.T) {
 		usersRepository.On("FindByUsername", mock.Anything, mock.AnythingOfType("string")).Return(usersDomain, businesses.ErrDuplicateData).Once()
