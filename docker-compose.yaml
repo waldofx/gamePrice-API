@@ -5,7 +5,7 @@ services:
         build: .
         restart: "no"
         ports:
-            - 8005:8080
+            - 8080:8080
 
     mysql-gameprice-api:
         image: mariadb:10.1
