@@ -51,6 +51,6 @@ jobs:
             -  uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
                 with:
                     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-                    heroku_app_name: "gameprice-api" #Must be unique in Heroku
-                    heroku_email: "test@gmail.com"
+                    heroku_app_name: "gameprice-api2" #Must be unique in Heroku
+                    heroku_email: "waldofelix1@gmail.com"
                     usedocker: true
