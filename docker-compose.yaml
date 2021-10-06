@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+    gameprice-api:
+        build: .
+        restart: "no"
+        ports:
+            - 8005:8080
+
+    mysql-gameprice-api:
+        image: mariadb:10.1
+        hostname: mysql.docker
+        command: --init-file /app/app/config/init.sql
+        volumes:
+            - ./init.sql:/app/app/config/init.sql
+        environment:
+            MYSQL_ROOT_USER: root
+            MYSQL_DATABASE: gameprice
+            MYSQL_USER: root
+            MYSQL_ROOT_PASSWORD: password
+        ports:
+            - 3336:3306
+        restart: "no"

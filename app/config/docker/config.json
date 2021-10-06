@@ -1,16 +1,16 @@
 {
-    "debug": true,
+    "debug": false,
     "server": {
-        "address": "localhost:8080"
+        "address": ":8080"
     },
     "context": {
         "timeout": 2
     },
     "database": {
-        "host": "0.0.0.0",
+        "host": "mysql-gameprice-api",
         "port": "3306",
         "user": "root",
-        "pass": "",
+        "pass": "password",
         "name": "gameprice"
     },
     "jwt": {
