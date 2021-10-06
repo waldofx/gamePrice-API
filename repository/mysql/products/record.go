@@ -15,8 +15,9 @@ type Products struct {
 	Game      		games.Games 	//`gorm:"foreignKey:games_id"`
 	SellerID  		int				//`gorm:"foreignKey:sellers_id"`
 	Seller    		sellers.Sellers //`gorm:"foreignKey:sellers_id"`
-	Price	  		int
-	URL				string
+	Price	  		string			`gorm:"default:Price is not available."`
+	Discount		bool			`gorm:"default:false"`
+	URL				string			`gorm:"default:URL is not available."`
 }
 
 func ToDomain(rec Products) products.Domain {
@@ -27,6 +28,7 @@ func ToDomain(rec Products) products.Domain {
 		SellerID: 	rec.SellerID,
 		Seller: 	rec.Seller.Name,
 		Price: 		rec.Price,
+		Discount:	rec.Discount,
 		URL: 		rec.URL,
 		CreatedAt: 	rec.CreatedAt,
 		UpdatedAt: 	rec.UpdatedAt,
@@ -39,6 +41,7 @@ func FromDomain(domain products.Domain) Products {
 		GameID: 	domain.GameID,
 		SellerID: 	domain.SellerID,
 		Price: 		domain.Price,
+		Discount:	domain.Discount,
 		URL: 		domain.URL,
 	}
 }

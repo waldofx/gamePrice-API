@@ -9,7 +9,8 @@ type Domain struct {
 	Game      string
 	SellerID  int
 	Seller    string
-	Price	  int
+	Price	  string
+	Discount  bool
 	URL		  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -17,6 +18,7 @@ type Domain struct {
 
 // inteface of bussiness layer -> fungsi fungsi yang di butuhkan oleh domain (bussiness logic)
 type Service interface {
+	APIDetail(product *Domain) (*Domain, error)
 	Append(product *Domain) (*Domain, error)
 	FindAll() ([]Domain, error)
 	FindByID(id int) (*Domain, error)
@@ -31,6 +33,5 @@ type Repository interface {
 	FindByID(id int) (*Domain, error)
 	Update(product *Domain, id int) (*Domain, error)
 	Delete(product *Domain, id int) (string, error)
-	// GetPrice(name string) (int, error)
-	// GetData(appid string) (int, error)
+	GetProduct(int, int) (int, string, bool, string)
 }

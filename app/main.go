@@ -20,7 +20,6 @@ import (
 	_handlerUsers "gameprice-api/controllers/users"
 	_repoUsers "gameprice-api/repository/mysql/users"
 
-	_repoGOGapis "gameprice-api/repository/thirdparty/gogapis"
 	_repoSteamapis "gameprice-api/repository/thirdparty/steamapis"
 
 	_servProducts "gameprice-api/business/products"
@@ -91,12 +90,11 @@ func main() {
 	usersService := _servUsers.NewService(usersRepo, &configJWT, timeoutContext)
 	usersHandler := _handlerUsers.NewHandler(usersService)
 	steamapisRepo := _repoSteamapis.NewRepo()
-	gogapisRepo := _repoGOGapis.NewRepo()
 	productsRepo := _repoProducts.NewRepoMySQL(db)
-	productsService := _servProducts.NewService(productsRepo, steamapisRepo, gogapisRepo)
+	productsService := _servProducts.NewService(productsRepo, steamapisRepo)
 	productsHandler := _handlerProducts.NewHandler(productsService)
 	wishesRepo := _repoWishes.NewRepoMySQL(db)
-	wishesService := _servWishes.NewService(wishesRepo)
+	wishesService := _servWishes.NewService(wishesRepo, productsRepo)
 	wishesHandler := _handlerWishes.NewHandler(wishesService)
 
 	// initial of routes

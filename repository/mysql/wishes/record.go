@@ -13,12 +13,15 @@ type Wishes struct {
 	gorm.Model
 	ID       		uint 				`gorm:"primaryKey"`
 	UserID	 		int					
-	User      		users.Users 		//`gorm:"foreignKey:users_id"`
+	User      		users.Users
 	GameID			int
 	Game			games.Games
 	SellerID		int	
 	Seller			sellers.Sellers
-	Price	  		int
+	ProductID		int
+	Price2			string
+	Discount		bool
+	URL				string
 }
 
 func ToDomain(rec Wishes) wishes.Domain {
@@ -30,6 +33,10 @@ func ToDomain(rec Wishes) wishes.Domain {
 		GameName: 	rec.Game.Name,
 		SellerID: 	rec.SellerID,
 		GameSeller: rec.Seller.Name,
+		ProductID: 	rec.ProductID,
+		Price: 		rec.Price2,
+		Discount: 	rec.Discount,
+		URL: 		rec.URL,	
 		CreatedAt: 	rec.CreatedAt,
 		UpdatedAt: 	rec.UpdatedAt,
 	}
@@ -41,6 +48,10 @@ func FromDomain(domain wishes.Domain) Wishes {
 		UserID: 	domain.UserID,
 		GameID: 	domain.GameID,
 		SellerID: 	domain.SellerID,
+		ProductID:  domain.ProductID,
+		Price2: 	domain.Price,
+		Discount: 	domain.Discount,
+		URL: 		domain.URL,
 	}
 }
 

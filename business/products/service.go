@@ -1,22 +1,18 @@
 package products
 
 import (
-	"fmt"
-	"gameprice-api/business/gogapis"
 	"gameprice-api/business/steamapis"
 )
 
 type serviceProducts struct {
 	repository 	Repository
 	reposteam 	steamapis.Repository
-	repogog		gogapis.Repository
 }
 
-func NewService(repoProduct Repository, rs steamapis.Repository, rg gogapis.Repository) Service {
+func NewService(repoProduct Repository, rs steamapis.Repository) Service {
 	return &serviceProducts{
 		repository: repoProduct,
 		reposteam: rs,
-		repogog: rg,
 	}
 }
 
@@ -30,17 +26,13 @@ func (servProduct *serviceProducts) APIDetail(product *Domain) (*Domain, error) 
 		if err != nil {
 			return &Domain{}, err
 		}
+		product.Discount = steam2.Discount
 		product.Price = steam2.Price
 		product.URL = ("https://store.steampowered.com/app/" + steam.AppID)
 
 	} else if product.SellerID == 2{
-		gog, err := servProduct.repogog.GetData("1447947499")
-		if err != nil {
-			println("ERROR GetData: ", err)
-			return &Domain{}, err
-		}
-		product.URL = gog.URL
-		fmt.Println(gog.URL)
+		product.Price = "Price is not available from this seller."
+		product.URL = ("https://www.gog.com/game/"+product.Game)
 	}
 	return product, nil
 }
@@ -76,6 +68,11 @@ func (servProduct *serviceProducts) Update(product *Domain, id int) (*Domain, er
 	if err != nil {
 		return &Domain{}, err
 	}
+	result, err = servProduct.APIDetail(result)
+	if err != nil {
+		return &Domain{}, err
+	}
+	servProduct.repository.Update(result, id)
 	return result, nil
 }
 

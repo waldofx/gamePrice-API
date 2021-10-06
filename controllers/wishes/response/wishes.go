@@ -13,7 +13,9 @@ type Wishes struct {
 	GameName	string		`json:"game_name"`
 	SellerID	int 		`json:"seller_id"`
 	GameSeller	string		`json:"game_seller"`
-	Price		int			`json:"price"`
+	Price		string		`json:"price"`
+	Discount	bool		`json:"discount"`
+	URL			string		`json:"url"`
 	CreatedAt 	time.Time 	`json:"created_at"`
 	UpdatedAt 	time.Time 	`json:"updated_at"`
 }
@@ -28,6 +30,8 @@ func FromDomain(domain wishes.Domain) Wishes {
 		SellerID: 	domain.SellerID,
 		GameSeller: domain.GameSeller,
 		Price: 		domain.Price,
+		Discount: 	domain.Discount,
+		URL: 		domain.URL,
 		CreatedAt: 	domain.CreatedAt,
 		UpdatedAt: 	domain.UpdatedAt,
 	}

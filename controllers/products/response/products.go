@@ -9,9 +9,10 @@ type Products struct {
 	ID        	int       	`json:"id"`
 	GameID		int			`json:"game_id"`
 	Game		string		`json:"game"`
-	SellerID		int		`json:"seller_id"`
+	SellerID	int			`json:"seller_id"`
 	Seller		string		`json:"seller"`
-	Price		int			`json:"price"`
+	Price		string		`json:"price"`
+	Discount	bool		`json:"discount"`
 	URL			string		`json:"url"`
 	CreatedAt 	time.Time 	`json:"created_at"`
 	UpdatedAt 	time.Time 	`json:"updated_at"`
@@ -25,6 +26,7 @@ func FromDomain(domain products.Domain) Products {
 		Seller: 	domain.Seller,
 		SellerID: 	domain.SellerID,
 		Price:		domain.Price,
+		Discount: 	domain.Discount,
 		URL: 		domain.URL,
 		CreatedAt: 	domain.CreatedAt,
 		UpdatedAt: 	domain.UpdatedAt,
