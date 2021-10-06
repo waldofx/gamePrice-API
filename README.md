@@ -1,3 +1,3 @@
 # gamePrice-API
 
-Mini project backend Alterra. REST API untuk mengecek harga game. test6.
+Mini project backend Alterra. REST API untuk mengecek harga game. test8.
